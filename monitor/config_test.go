@@ -3,6 +3,7 @@ package monitor
 import (
 	"strconv"
 	"testing"
+	"time"
 
 	"cwmonitor/metrics"
 	"github.com/stretchr/testify/assert"
@@ -36,6 +37,17 @@ func TestConfig_Validate(t *testing.T) {
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "metrics")
 	})
+
+	t.Run("valid", func(t *testing.T) {
+		c := Config{
+			Namespace: "namespace",
+			Interval:  time.Minute,
+			HostId:    "id",
+			Metrics:   "cpu,memory",
+		}
+		err := c.Validate()
+		assert.NoError(t, err)
+	})
 }
 
 func TestConfig_GetRequestedMetrics(t *testing.T) {
@@ -66,10 +78,10 @@ func TestConfig_GetRequestedMetrics(t *testing.T) {
 }
 
 func TestConfig_GetExtraDimensions(t *testing.T) {
-	c := Config{Id: "id"}
+	c := Config{HostId: "id"}
 	dim := c.GetExtraDimensions()
 
 	assert.Len(t, dim, 1)
-	assert.Equal(t, dim[0].Name, "machine")
+	assert.Equal(t, dim[0].Name, "host")
 	assert.Equal(t, dim[0].Value, "id")
 }

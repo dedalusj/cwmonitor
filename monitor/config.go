@@ -14,7 +14,7 @@ import (
 type Config struct {
 	Namespace string
 	Interval  time.Duration
-	Id        string
+	HostId    string
 	Metrics   string
 	Once      bool
 	Version   string
@@ -29,14 +29,14 @@ func (c Config) Validate() error {
 	if c.Interval == time.Duration(0) {
 		err.Add(errors.New("interval cannot be zero"))
 	}
-	if c.Id == "" {
-		err.Add(errors.New("id cannot be empty"))
+	if c.HostId == "" {
+		err.Add(errors.New("hostid cannot be empty"))
 	}
 	if c.Metrics == "" {
 		err.Add(errors.New("metrics cannot be empty"))
 	}
 
-	return err
+	return err.ErrorOrNil()
 }
 
 func (c Config) GetRequestedMetrics() []metrics.Metric {
@@ -71,6 +71,6 @@ func (c Config) GetRequestedMetrics() []metrics.Metric {
 }
 
 func (c Config) GetExtraDimensions() []metrics.Dimension {
-	extraDimensions, _ := metrics.MapToDimensions(map[string]string{"machine": c.Id})
+	extraDimensions, _ := metrics.MapToDimensions(map[string]string{"host": c.HostId})
 	return extraDimensions
 }

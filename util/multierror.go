@@ -21,7 +21,7 @@ func (me *MultiError) Add(err error) {
 
 func (me MultiError) Error() string {
 	if len(me.Errors) == 1 {
-		return fmt.Sprintf("1 error occurred:\n\t* %s\n\n", me.Errors[0])
+		return fmt.Sprintf("1 error occurred:\n\t* %s\n", me.Errors[0])
 	}
 
 	points := make([]string, len(me.Errors))
@@ -30,7 +30,7 @@ func (me MultiError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"%d errors occurred:\n\t%s\n\n",
+		"%d errors occurred:\n\t%s\n",
 		len(me.Errors), strings.Join(points, "\n\t"))
 }
 

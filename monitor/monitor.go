@@ -15,11 +15,12 @@ import (
 )
 
 func GatherData(collectedMetrics []metrics.Metric) metrics.Data {
+	log.Debugf("gathering data for %d metrics", len(collectedMetrics))
 	data := metrics.Data{}
 	for _, metric := range collectedMetrics {
 		d, err := metric.Gather()
 		if err != nil {
-			log.Errorf("failed to Monitor data from metric [%s]: %s", metric.Name(), err)
+			log.Errorf("failed to gather data from metric [%s]: %s", metric.Name(), err)
 			continue
 		}
 
@@ -57,6 +58,7 @@ func convertDataToCloudWatch(data metrics.Data) []*cloudwatch.MetricDatum {
 }
 
 func PublishDataToCloudWatch(data metrics.Data, client cloudwatchiface.CloudWatchAPI, namespace string) error {
+	log.Debug("publishing data points")
 	multierror := util.MultiError{}
 	for _, d := range data.Batch(20) {
 		datum := convertDataToCloudWatch(d)
@@ -77,25 +79,34 @@ func Monitor(metrics []metrics.Metric, extraDimensions []metrics.Dimension, clie
 	data.AddDimensions(extraDimensions...)
 	err := PublishDataToCloudWatch(data, client, namespace)
 	if err != nil {
-		log.Errorf("failed to PublishDataToCloudWatch metrics: %s", err)
+		log.Errorf("failed to publish data to cloudwatch: %s", err)
+	} else {
+		log.Infof("published %d data points to namespace [%s]", len(data), namespace)
 	}
 }
 
 func Exec(c Config) error {
-	log.Infof("cwmonitor - version: %s", c.Version)
-
 	err := c.Validate()
 	if err != nil {
 		return errors.Wrap(err, "invalid inputs")
 	}
 
-	sess := session.Must(session.NewSession())
+	log.Info("cwmonitor")
+	log.Info("config:")
+	log.Infof("  Version:   %s", c.Version)
+	log.Infof("  Metrics:   %s", c.Metrics)
+	log.Infof("  Interval:  %s", c.Interval)
+	log.Infof("  Namespace: %s", c.Namespace)
+	log.Infof("  HostId:    %s", c.HostId)
+
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
 	svc := cloudwatch.New(sess)
 
-	if c.Once {
-		Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), svc, c.Namespace)
-	} else {
-		log.Infof("interval: %d minutes", c.Interval)
+	log.Info("starting monitoring")
+	Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), svc, c.Namespace)
+	if !c.Once {
 		for range time.Tick(c.Interval) {
 			Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), svc, c.Namespace)
 		}

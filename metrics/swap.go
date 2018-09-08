@@ -3,6 +3,8 @@ package metrics
 import (
 	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/mem"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Swap struct{}
@@ -12,6 +14,7 @@ func (s Swap) Name() string {
 }
 
 func (s Swap) Gather() (Data, error) {
+	log.Debug("gathering swap info")
 	swapMetrics, err := mem.SwapMemory()
 	if err != nil {
 		return Data{}, errors.Wrap(err, "failed to gather memory data")

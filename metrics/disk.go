@@ -3,6 +3,8 @@ package metrics
 import (
 	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/disk"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Disk struct{}
@@ -12,6 +14,7 @@ func (d Disk) Name() string {
 }
 
 func (d Disk) Gather() (Data, error) {
+	log.Debug("gathering disk info")
 	diskMetrics, err := disk.Usage("/")
 	if err != nil {
 		return Data{}, errors.Wrap(err, "failed to gather disk data")

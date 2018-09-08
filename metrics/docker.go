@@ -7,6 +7,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/pkg/errors"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -47,6 +48,8 @@ func (d DockerStat) getStats(containerID string) (types.StatsJSON, error) {
 }
 
 func (d DockerStat) Gather() (Data, error) {
+	log.Debug("gathering docker stats")
+
 	if d.client == nil {
 		cli, err := client.NewEnvClient()
 		if err != nil {
@@ -98,6 +101,8 @@ func (d DockerHealth) Name() string {
 }
 
 func (d DockerHealth) Gather() (Data, error) {
+	log.Debug("gathering docker health")
+
 	if d.client == nil {
 		cli, err := client.NewEnvClient()
 		if err != nil {

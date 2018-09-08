@@ -24,11 +24,11 @@ func initLogger(c *cli.Context) {
 func getConfig(c *cli.Context) monitor.Config {
 	return monitor.Config{
 		Namespace: c.String("namespace"),
-		Interval: time.Duration(c.Int("interval")) * time.Minute,
-		Id: c.String("id"),
-		Metrics: c.String("metrics"),
-		Once: c.Bool("once"),
-		Version: c.App.Version,
+		Interval:  time.Duration(c.Int("interval")) * time.Minute,
+		HostId:    c.String("hostid"),
+		Metrics:   c.String("metrics"),
+		Once:      c.Bool("once"),
+		Version:   c.App.Version,
 	}
 }
 
@@ -48,7 +48,7 @@ func main() {
 		cli.IntFlag{
 			Name:   "interval",
 			Usage:  "Time interval",
-			Value:  5,
+			Value:  1,
 			EnvVar: "CWMONITOR_INTERVAL",
 		},
 		cli.BoolFlag{
@@ -62,9 +62,8 @@ func main() {
 			EnvVar: "CWMONITOR_NAMESPACE",
 		},
 		cli.StringFlag{
-			Name:   "id",
-			Usage:  "ID of the current machine",
-			Value:  "localhost",
+			Name:   "hostid",
+			Usage:  "ID of the current host",
 			EnvVar: "CWMONITOR_ID",
 		},
 		cli.BoolFlag{
