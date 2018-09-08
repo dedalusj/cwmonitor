@@ -11,8 +11,11 @@ sudo: false
 install: true
 
 env:
-  - GO111MODULE=on
-  - REGISTRY_USER=dedalusj
+  global:
+    - GO111MODULE=on
+    - REGISTRY_USER=dedalusj
+    - secure: UzTlCKI77kM8U/M63IM/o75XYs4krBa7dgDc89BKhBGrAwxtUW2WDdoIN7lg7Eh/x9afEQs2aC9HTKtQfbwDSpVKFEqmPsVsWf1WUdX11Suh2NWvTWIBgu7wiUqFW0GEV/uYrwTiX9Jm6xPYcfOB/USTPZbGlE047NfIJ+lE1zfVi5Lq2SofjXPLVdhsGzzMb6/NX6P7ebWBTabWm4SoBhqgqfmkrkJEDvBHYZ8bAIBSipVTR6kjyzsE2b7fZigMR+nNxKNpphq4qf9J7MhiJGPAZPyfLX/LiEmS4JE5D+Id4k1iJEooZUM6kkTJouDJ37aBPUPKtRkrrOYE9xfzVNwJDUIa9+iPc0Hfu85jDqu05HsW+KW9Bwm2IUmqGBVgUb/6WTzCIai657q2KbQeQnQ/5H2PmWX9rVaTlhtCfNSMJG2+ACBizGsn9BQEmAKNa8RufjMhIwSyzrDy4pc5nHmmw1lSv+s65K7EcsO5oOiy4ZCx/wNlYdY8bce2ArpnzndsjDXTwk/KjF7XWWVOqfqzUv0TjfVaB6355Rr+/phzbM8VFi2Drl0pV6m4jhYeFJ3NJ+UuIHM4rWyAVp1Go6AXsNVMsqUbcybLeYwLwBXVy6vK/rWZCdmfvSfUX0fgX0AD4IRpnE64cFDl1pUi7/fGPLfN9SrlaKkIDgxHTdM=
+
 
 script:
   - make build
@@ -23,14 +26,18 @@ after_success:
   - cp .coverage.out coverage.txt
   - bash <(curl -s https://codecov.io/bash)
 
-#before_deploy:
-#  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+before_deploy:
+  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD"
 
 deploy:
-  provider: releases
-  api_key:
-    secure: YmX2RizTuIj9E+82oAd8VVNypMZMcw3myuumPjd+dHXy1MkCSI1GLx5Sqay2EqChGt+45B2Ov/J8VLFGKzPaciAC4aybHc+Q0RZiyIr4slg2bwqsB3HM1k8XUBhPeeSt7hRMZg+vMvDPTDJUFxf/k39XlUbPTGWfTBFeJceZnDUQxpI85xxASDohHg6GP8a/EefDcGyUvjyul68rS0gST2SNFb/f5GsH3potUfGqoJK45EwG16bQlLTYSmAJFEhAH7xNJ6PHcShOgCLrHThZ+LO6857temwfRQmRpvhKJF+W6uJzU1Hhv79rJwnxlhlWDbeWHgyGuDP1sQTbRqH0yHnrY9RXOVXd2LJ8julEe/jMLX948lm9dwx68xSs8zu5b3ve5W6Xz6TXRqrhhxaTCBM9NNkUmRlhcvG5kPYiUrsSFo97w5Go7Q8AYqZhSMy4fME2MjTu66zbn+Typh/a2YdBfcquqesIb/CvTFLV+kuV1raERVZvUd3QcCqtWzgf0s26yhaAF8Rw6qo9l4DX3yuOUAdcBgLSJRral3Y1bxrAjfYvFcbmdxn2POV1uzk+eD00YKH0fpsEkAB5j0yWFgC74DUWbnzOw11tOE1nOFPLwxqhjSKrI+89dgoThs1exSivLTdxcWqfwyreyrBwVAy0DkCsVB2Lp2ZIKzBdiRE=
-  file: cwmonitor
-  skip_cleanup: true
-  on:
-    tags: true
+  - provider: releases
+    api_key:
+      secure: YmX2RizTuIj9E+82oAd8VVNypMZMcw3myuumPjd+dHXy1MkCSI1GLx5Sqay2EqChGt+45B2Ov/J8VLFGKzPaciAC4aybHc+Q0RZiyIr4slg2bwqsB3HM1k8XUBhPeeSt7hRMZg+vMvDPTDJUFxf/k39XlUbPTGWfTBFeJceZnDUQxpI85xxASDohHg6GP8a/EefDcGyUvjyul68rS0gST2SNFb/f5GsH3potUfGqoJK45EwG16bQlLTYSmAJFEhAH7xNJ6PHcShOgCLrHThZ+LO6857temwfRQmRpvhKJF+W6uJzU1Hhv79rJwnxlhlWDbeWHgyGuDP1sQTbRqH0yHnrY9RXOVXd2LJ8julEe/jMLX948lm9dwx68xSs8zu5b3ve5W6Xz6TXRqrhhxaTCBM9NNkUmRlhcvG5kPYiUrsSFo97w5Go7Q8AYqZhSMy4fME2MjTu66zbn+Typh/a2YdBfcquqesIb/CvTFLV+kuV1raERVZvUd3QcCqtWzgf0s26yhaAF8Rw6qo9l4DX3yuOUAdcBgLSJRral3Y1bxrAjfYvFcbmdxn2POV1uzk+eD00YKH0fpsEkAB5j0yWFgC74DUWbnzOw11tOE1nOFPLwxqhjSKrI+89dgoThs1exSivLTdxcWqfwyreyrBwVAy0DkCsVB2Lp2ZIKzBdiRE=
+    file: cwmonitor
+    skip_cleanup: true
+    on:
+      tags: true
+  - provider: script
+    script: make push
+    on:
+      tags: true
