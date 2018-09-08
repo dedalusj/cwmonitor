@@ -4,9 +4,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/urfave/cli"
-	"cwmonitor/cmd"
+	"cwmonitor/monitor"
 	"cwmonitor/util"
+	"github.com/urfave/cli"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -21,8 +21,8 @@ func initLogger(c *cli.Context) {
 	}
 }
 
-func getConfig(c *cli.Context) cmd.Config {
-	return cmd.Config{
+func getConfig(c *cli.Context) monitor.Config {
+	return monitor.Config{
 		Namespace: c.String("namespace"),
 		Interval: time.Duration(c.Int("interval")) * time.Minute,
 		Id: c.String("id"),
@@ -75,7 +75,7 @@ func main() {
 	app.Action = func(c *cli.Context) error {
 		initLogger(c)
 		config := getConfig(c)
-		err := cmd.Exec(config)
+		err := monitor.Exec(config)
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}

@@ -1,52 +1,20 @@
-package cmd
+package monitor
 
 import (
-	"strings"
 	"time"
 
+	"cwmonitor/metrics"
+	"cwmonitor/util"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/pkg/errors"
-	"cwmonitor/metrics"
-	"cwmonitor/util"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func buildMetrics(s string) []metrics.Metric {
-	metricsSet := map[string]bool{}
-	for _, m := range strings.Split(s, ",") {
-		metricsSet[m] = true
-	}
-	
-	collectedMetrics := make([]metrics.Metric, 0, len(metricsSet))
-	for m := range metricsSet {
-		switch m {
-		case "memory":
-			collectedMetrics = append(collectedMetrics, metrics.Memory{})
-		case "swap":
-			collectedMetrics = append(collectedMetrics, metrics.Swap{})
-		case "disk":
-			collectedMetrics = append(collectedMetrics, metrics.Disk{})
-		case "cpu":
-			collectedMetrics = append(collectedMetrics, metrics.CPU{})
-		case "docker-stats":
-			collectedMetrics = append(collectedMetrics, metrics.DockerStat{})
-		case "docker-health":
-			collectedMetrics = append(collectedMetrics, metrics.DockerHealth{})
-		case "":
-			continue
-		default:
-			log.Warnf("unknown metric: %s", m)
-		}
-	}
-
-	return collectedMetrics
-}
-
-func Gather(collectedMetrics []metrics.Metric) metrics.Data {
+func GatherData(collectedMetrics []metrics.Metric) metrics.Data {
 	data := metrics.Data{}
 	for _, metric := range collectedMetrics {
 		d, err := metric.Gather()
@@ -88,7 +56,7 @@ func convertDataToCloudWatch(data metrics.Data) []*cloudwatch.MetricDatum {
 	return output
 }
 
-func Put(data metrics.Data, client cloudwatchiface.CloudWatchAPI, namespace string) error {
+func PublishDataToCloudWatch(data metrics.Data, client cloudwatchiface.CloudWatchAPI, namespace string) error {
 	multierror := util.MultiError{}
 	for _, d := range data.Batch(20) {
 		datum := convertDataToCloudWatch(d)
@@ -105,62 +73,31 @@ func Put(data metrics.Data, client cloudwatchiface.CloudWatchAPI, namespace stri
 }
 
 func Monitor(metrics []metrics.Metric, extraDimensions []metrics.Dimension, client cloudwatchiface.CloudWatchAPI, namespace string) {
-	data := Gather(metrics)
+	data := GatherData(metrics)
 	data.AddDimensions(extraDimensions...)
-	err := Put(data, client, namespace)
+	err := PublishDataToCloudWatch(data, client, namespace)
 	if err != nil {
-		log.Errorf("failed to Put metrics: %s", err)
+		log.Errorf("failed to PublishDataToCloudWatch metrics: %s", err)
 	}
-}
-
-type Config struct {
-	Namespace string
-	Interval  time.Duration
-	Id        string
-	Metrics   string
-	Once      bool
-	Version   string
-}
-
-func (c Config) Validate() error {
-	err := util.MultiError{}
-
-	if c.Namespace == "" {
-		err.Add(errors.New("namespace cannot be empty"))
-	}
-	if c.Interval == time.Duration(0) {
-		err.Add(errors.New("interval cannot be zero"))
-	}
-	if c.Id == "" {
-		err.Add(errors.New("id cannot be empty"))
-	}
-	if c.Metrics == "" {
-		err.Add(errors.New("metrics cannot be empty"))
-	}
-
-	return err
 }
 
 func Exec(c Config) error {
-	log.Infof("mon-Put-data - version: %s", c.Version)
+	log.Infof("cwmonitor - version: %s", c.Version)
 
 	err := c.Validate()
 	if err != nil {
 		return errors.Wrap(err, "invalid inputs")
 	}
 
-	extraDimensions, _ := metrics.MapToDimensions(map[string]string{"machine": c.Id})
-	collectedMetrics := buildMetrics(c.Metrics)
-
 	sess := session.Must(session.NewSession())
 	svc := cloudwatch.New(sess)
 
 	if c.Once {
-		Monitor(collectedMetrics, extraDimensions, svc, c.Namespace)
+		Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), svc, c.Namespace)
 	} else {
 		log.Infof("interval: %d minutes", c.Interval)
 		for range time.Tick(c.Interval) {
-			Monitor(collectedMetrics, extraDimensions, svc, c.Namespace)
+			Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), svc, c.Namespace)
 		}
 	}
 
