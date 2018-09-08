@@ -1,5 +1,5 @@
 OUT := cwmonitor
-GIT_VERSION := $(shell git describe --always || echo "dev")
+GIT_VERSION := $(shell git describe --always --tags || echo "dev")
 BUILD_TIME := $(shell date -u +"%Y%m%d%H%M%S")
 VERSION := $(GIT_VERSION)-$(BUILD_TIME)
 DOCKER_IMAGE := dedalusj/$(OUT)
