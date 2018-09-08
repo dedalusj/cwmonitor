@@ -17,7 +17,6 @@ script:
   - make build
   - make test
   - make coverage
-#  - make vet
 
 after_success:
   - cp .coverage.out coverage.txt
