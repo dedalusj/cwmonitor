@@ -27,7 +27,7 @@ clean:
 	-@rm ${OUT}
 
 coverage:
-	@go test -short -coverprofile=.coverage.out ${PKG_LIST}
+	@go test -short -coverprofile=.coverage.out -covermode=atomic ${PKG_LIST}
 	@go tool cover -html .coverage.out
 
 build-linux:

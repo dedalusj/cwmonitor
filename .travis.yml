@@ -17,4 +17,8 @@ script:
   - make build
   - make test
   - make coverage
-  - make vet
+#  - make vet
+
+after_success:
+  - cp coverage.out coverage.txt
+  - bash <(curl -s https://codecov.io/bash)
