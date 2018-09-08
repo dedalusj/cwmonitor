@@ -1,4 +1,5 @@
 language: go
+
 go:
   - 1.11.x
 
@@ -7,11 +8,11 @@ os:
 
 dist: trusty
 sudo: false
-
 install: true
 
 env:
   - GO111MODULE=on
+  - REGISTRY_USER=dedalusj
 
 script:
   - make build
@@ -21,3 +22,15 @@ script:
 after_success:
   - cp .coverage.out coverage.txt
   - bash <(curl -s https://codecov.io/bash)
+
+#before_deploy:
+#  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: YmX2RizTuIj9E+82oAd8VVNypMZMcw3myuumPjd+dHXy1MkCSI1GLx5Sqay2EqChGt+45B2Ov/J8VLFGKzPaciAC4aybHc+Q0RZiyIr4slg2bwqsB3HM1k8XUBhPeeSt7hRMZg+vMvDPTDJUFxf/k39XlUbPTGWfTBFeJceZnDUQxpI85xxASDohHg6GP8a/EefDcGyUvjyul68rS0gST2SNFb/f5GsH3potUfGqoJK45EwG16bQlLTYSmAJFEhAH7xNJ6PHcShOgCLrHThZ+LO6857temwfRQmRpvhKJF+W6uJzU1Hhv79rJwnxlhlWDbeWHgyGuDP1sQTbRqH0yHnrY9RXOVXd2LJ8julEe/jMLX948lm9dwx68xSs8zu5b3ve5W6Xz6TXRqrhhxaTCBM9NNkUmRlhcvG5kPYiUrsSFo97w5Go7Q8AYqZhSMy4fME2MjTu66zbn+Typh/a2YdBfcquqesIb/CvTFLV+kuV1raERVZvUd3QcCqtWzgf0s26yhaAF8Rw6qo9l4DX3yuOUAdcBgLSJRral3Y1bxrAjfYvFcbmdxn2POV1uzk+eD00YKH0fpsEkAB5j0yWFgC74DUWbnzOw11tOE1nOFPLwxqhjSKrI+89dgoThs1exSivLTdxcWqfwyreyrBwVAy0DkCsVB2Lp2ZIKzBdiRE=
+  file: cwmonitor
+  skip_cleanup: true
+  on:
+    tags: true

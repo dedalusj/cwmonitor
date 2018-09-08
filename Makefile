@@ -1,13 +1,14 @@
 OUT := cwmonitor
-VERSION := $(shell git describe --always || echo "dev")
+GIT_VERSION := $(shell git describe --always || echo "dev")
 BUILD_TIME := $(shell date -u +"%Y%m%dT%H%M%S")
+VERSION := $(GIT_VERSION)-$(BUILD_TIME)
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/)
 
 all: run
 
 build:
-	go build -i -v -o ${OUT} -ldflags="-X main.version=${VERSION}-${BUILD_TIME}" .
+	CGO_ENABLED=0 go build -i -v -o ${OUT} -ldflags="-X main.version=${VERSION}" .
 
 test:
 	@go test -short -v ${PKG_LIST}
@@ -31,7 +32,7 @@ coverage:
 	@go tool cover -html .coverage.out
 
 build-linux:
-	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-X main.version=${VERSION}" -o ${OUT} ${PKG}
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-X main.version=${VERSION}" -o ${OUT} .
 
 docker: build-linux
 	docker build -t "dedalusj/${OUT}:${VERSION}" .
