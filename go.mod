@@ -1,4 +1,4 @@
-module mon-put-data
+module cwmonitor
 
 require (
 	github.com/Microsoft/go-winio v0.4.11 // indirect

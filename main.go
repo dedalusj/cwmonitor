@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/urfave/cli"
-	"mon-put-data/cmd"
-	"mon-put-data/util"
+	"cwmonitor/cmd"
+	"cwmonitor/util"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -34,7 +34,7 @@ func getConfig(c *cli.Context) cmd.Config {
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "mon-Put-data"
+	app.Name = "cwmonitor"
 	app.Usage = "Publish Custom Metrics to CloudWatch"
 	app.Version = version
 	app.Author = "Jacopo Sabbatini"

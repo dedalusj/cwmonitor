@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/pkg/errors"
-	"mon-put-data/metrics"
-	"mon-put-data/util"
+	"cwmonitor/metrics"
+	"cwmonitor/util"
 
 	log "github.com/sirupsen/logrus"
 )

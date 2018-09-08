@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"mon-put-data/metrics"
+	"cwmonitor/metrics"
 )
 
 func TestBuildMetrics(t *testing.T) {
