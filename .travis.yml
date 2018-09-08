@@ -14,5 +14,7 @@ env:
   - GO111MODULE=on
 
 script:
-  - go build
-  - go test
+  - make build
+  - make test
+  - make coverage
+  - make vet
