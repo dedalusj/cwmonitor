@@ -31,10 +31,7 @@ coverage:
 	@go test -short -coverprofile=.coverage.out -covermode=atomic ${PKG_LIST}
 	@go tool cover -html .coverage.out
 
-build-linux:
-	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-X main.version=${VERSION}" -o ${OUT} .
-
-docker: build-linux
+docker:
 	docker build -t "dedalusj/${OUT}:${VERSION}" .
 
 push: docker
