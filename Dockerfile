@@ -12,7 +12,13 @@ ENV GO111MODULE=on
 RUN make build
 
 FROM alpine:3.8
+ARG version
+ARG git_version
+ARG build_time
 RUN apk --no-cache add ca-certificates
-WORKDIR /root/
-COPY --from=0 /cwmonitor/cwmonitor .
+ENV VERSION $version
+ENV GIT_VERSION $git_version
+ENV BUILD_TIME $build_time
+WORKDIR /
+COPY --from=0 /cwmonitor/cwmonitor /cwmonitor
 ENTRYPOINT ["/cwmonitor"]

@@ -1,7 +1,9 @@
 OUT := cwmonitor
 GIT_VERSION := $(shell git describe --always || echo "dev")
-BUILD_TIME := $(shell date -u +"%Y%m%dT%H%M%S")
+BUILD_TIME := $(shell date -u +"%Y%m%d%H%M%S")
 VERSION := $(GIT_VERSION)-$(BUILD_TIME)
+DOCKER_IMAGE := dedalusj/$(OUT)
+DOCKER_TAG := $(GIT_VERSION)
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/)
 
@@ -32,9 +34,15 @@ coverage:
 	@go tool cover -html .coverage.out
 
 docker:
-	docker build -t "dedalusj/${OUT}:${VERSION}" .
+	docker build \
+	  --build-arg "version=${VERSION}" \
+	  --build-arg "git_version=${GIT_VERSION}" \
+	  --build-arg "build_time=${BUILD_TIME}" \
+	  -t "${DOCKER_IMAGE}:${DOCKER_TAG}" .
 
 push: docker
-	docker push dedalusj/${OUT}:${VERSION}
+	docker tag "${DOCKER_IMAGE}:${DOCKER_TAG}" "${DOCKER_IMAGE}:latest"
+	docker push "${DOCKER_IMAGE}:${DOCKER_TAG}"
+	docker push "${DOCKER_IMAGE}:latest"
 
 .PHONY: run build vet lint

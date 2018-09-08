@@ -43,13 +43,13 @@ func main() {
 			Name:   "metrics",
 			Usage:  "Comma separated list of metrics",
 			Value:  "cpu,memory",
-			EnvVar: "MPD_METRICS",
+			EnvVar: "CWMONITOR_METRICS",
 		},
 		cli.IntFlag{
 			Name:   "interval",
 			Usage:  "Time interval",
 			Value:  5,
-			EnvVar: "MPD_INTERVAL",
+			EnvVar: "CWMONITOR_INTERVAL",
 		},
 		cli.BoolFlag{
 			Name:  "once",
@@ -58,14 +58,14 @@ func main() {
 		cli.StringFlag{
 			Name:   "namespace",
 			Usage:  "Namespace for the metric data",
-			Value:  "MPD",
-			EnvVar: "MPD_NAMESPACE",
+			Value:  "CWMonitor",
+			EnvVar: "CWMONITOR_NAMESPACE",
 		},
 		cli.StringFlag{
 			Name:   "id",
-			Usage:  "ID for the current machine",
-			Value:  "local",
-			EnvVar: "MPD_ID",
+			Usage:  "ID of the current machine",
+			Value:  "localhost",
+			EnvVar: "CWMONITOR_ID",
 		},
 		cli.BoolFlag{
 			Name:  "debug",
