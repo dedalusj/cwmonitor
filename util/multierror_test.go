@@ -51,9 +51,19 @@ func TestMultiError_Error(t *testing.T) {
 }
 
 func TestMultiError_ErrorOrNil(t *testing.T) {
-	me := MultiError{}
-	assert.Nil(t, me.ErrorOrNil())
+	t.Run("no errors", func(t *testing.T) {
+		me := MultiError{}
+		assert.Nil(t, me.ErrorOrNil())
+	})
 
-	me.Add(errors.New("error 1"))
-	assert.Error(t, me.ErrorOrNil())
+	t.Run("single error", func(t *testing.T) {
+		me := MultiError{}
+		me.Add(errors.New("error 1"))
+		assert.Error(t, me.ErrorOrNil())
+	})
+
+	t.Run("nil error", func(t *testing.T) {
+		me := (*MultiError)(nil)
+		assert.NoError(t, me.ErrorOrNil())
+	})
 }

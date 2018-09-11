@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"cwmonitor/metrics"
-	"cwmonitor/util"
+	"github.com/dedalusj/cwmonitor/metrics"
+	"github.com/dedalusj/cwmonitor/util"
 	"github.com/pkg/errors"
 
 	log "github.com/sirupsen/logrus"

@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
-	"cwmonitor/monitor"
-	"cwmonitor/util"
+	"github.com/dedalusj/cwmonitor/monitor"
+	"github.com/dedalusj/cwmonitor/util"
 	"github.com/urfave/cli"
 
 	log "github.com/sirupsen/logrus"

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"cwmonitor/metrics"
+	"github.com/dedalusj/cwmonitor/metrics"
 	"github.com/stretchr/testify/assert"
 )
 
