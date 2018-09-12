@@ -15,6 +15,9 @@ build:
 test:
 	@go test -short -v ${PKG_LIST}
 
+test-all:
+	@go test -v ${PKG_LIST}
+
 vet:
 	@go vet ${PKG_LIST}
 
@@ -30,7 +33,7 @@ clean:
 	-@rm ${OUT}
 
 coverage:
-	@go test -short -coverprofile=.coverage.out -covermode=atomic ${PKG_LIST}
+	@go test -coverprofile=.coverage.out -covermode=atomic ${PKG_LIST}
 	@go tool cover -html .coverage.out
 
 docker:

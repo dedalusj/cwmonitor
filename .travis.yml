@@ -22,7 +22,7 @@ install: true
 
 script:
   - make build
-  - make test
+  - make test-all
   - make coverage
 
 after_success:
