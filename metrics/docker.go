@@ -67,15 +67,14 @@ func (d DockerStat) Gather() (Data, error) {
 
 	data := Data{}
 	for _, container := range containers {
-		dimensions := make([]Dimension, 0, 3)
-		containerId, _ := NewDimension("ContainerId", container.ID)
-		dimensions = append(dimensions, containerId)
-		dockerImage, _ := NewDimension("DockerImage", container.Image)
-		dimensions = append(dimensions, dockerImage)
+		dimensions := make([]Dimension, 0, 1)
+		var containerName Dimension
 		if len(container.Names) > 0 {
-			containerName, _ := NewDimension("ContainerName", container.Names[0])
-			dimensions = append(dimensions, containerName)
+			containerName, _ = NewDimension("ContainerName", container.Names[0])
+		} else {
+			containerName, _ = NewDimension("ContainerName", container.ID)
 		}
+		dimensions = append(dimensions, containerName)
 
 		stats, err := d.getStats(container.ID)
 		if err != nil {
@@ -120,15 +119,14 @@ func (d DockerHealth) Gather() (Data, error) {
 
 	data := Data{}
 	for _, container := range containers {
-		dimensions := make([]Dimension, 0, 3)
-		containerId, _ := NewDimension("ContainerId", container.ID)
-		dimensions = append(dimensions, containerId)
-		dockerImage, _ := NewDimension("DockerImage", container.Image)
-		dimensions = append(dimensions, dockerImage)
+		dimensions := make([]Dimension, 0, 1)
+		var containerName Dimension
 		if len(container.Names) > 0 {
-			containerName, _ := NewDimension("ContainerName", container.Names[0])
-			dimensions = append(dimensions, containerName)
+			containerName, _ = NewDimension("ContainerName", container.Names[0])
+		} else {
+			containerName, _ = NewDimension("ContainerName", container.ID)
 		}
+		dimensions = append(dimensions, containerName)
 
 		c, err := d.client.ContainerInspect(context.Background(), container.ID)
 		if err != nil {

@@ -41,8 +41,6 @@ func makeContainer(containerId string) types.Container {
 
 func makeContainerDimensions(id string) []Dimension {
 	return []Dimension{
-		{Name: "ContainerId", Value: id},
-		{Name: "DockerImage", Value: "image-"+id},
 		{Name: "ContainerName", Value: "name-"+id},
 	}
 }

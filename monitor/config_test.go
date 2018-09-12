@@ -82,6 +82,6 @@ func TestConfig_GetExtraDimensions(t *testing.T) {
 	dim := c.GetExtraDimensions()
 
 	assert.Len(t, dim, 1)
-	assert.Equal(t, dim[0].Name, "host")
+	assert.Equal(t, dim[0].Name, "Host")
 	assert.Equal(t, dim[0].Value, "id")
 }
