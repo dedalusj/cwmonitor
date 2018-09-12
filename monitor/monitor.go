@@ -1,10 +1,10 @@
 package monitor
 
 import (
-	"time"
+	"context"
+	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/dedalusj/cwmonitor/metrics"
@@ -85,7 +85,7 @@ func Monitor(metrics []metrics.Metric, extraDimensions []metrics.Dimension, clie
 	}
 }
 
-func Exec(c Config) error {
+func Run(c Config, ctx context.Context) error {
 	err := c.Validate()
 	if err != nil {
 		return errors.Wrap(err, "invalid inputs")
@@ -99,17 +99,27 @@ func Exec(c Config) error {
 	log.Infof("  Namespace: %s", c.Namespace)
 	log.Infof("  HostId:    %s", c.HostId)
 
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
-	svc := cloudwatch.New(sess)
-
 	log.Info("starting monitoring")
-	Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), svc, c.Namespace)
+	Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), c.Client, c.Namespace)
 	if !c.Once {
-		for range time.Tick(c.Interval) {
-			Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), svc, c.Namespace)
-		}
+		var wg sync.WaitGroup
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+			ticker := c.GetTicker()
+			for {
+				select {
+				case <-ticker.C:
+					Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), c.Client, c.Namespace)
+				case <-ctx.Done():
+					log.Info("stopping monitoring")
+					return
+				}
+			}
+		}()
+
+		wg.Wait()
 	}
 
 	return nil

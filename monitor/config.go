@@ -4,6 +4,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/dedalusj/cwmonitor/metrics"
 	"github.com/dedalusj/cwmonitor/util"
 	"github.com/pkg/errors"
@@ -18,6 +19,7 @@ type Config struct {
 	Metrics   string
 	Once      bool
 	Version   string
+	Client    cloudwatchiface.CloudWatchAPI
 }
 
 func (c Config) Validate() error {
@@ -73,4 +75,8 @@ func (c Config) GetRequestedMetrics() []metrics.Metric {
 func (c Config) GetExtraDimensions() []metrics.Dimension {
 	extraDimensions, _ := metrics.MapToDimensions(map[string]string{"host": c.HostId})
 	return extraDimensions
+}
+
+func (c Config) GetTicker() *time.Ticker {
+	return time.NewTicker(c.Interval)
 }

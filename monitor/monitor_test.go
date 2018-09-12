@@ -1,6 +1,7 @@
 package monitor
 
 import (
+	"context"
 	"errors"
 	"strconv"
 	"testing"
@@ -210,4 +211,47 @@ func TestMonitor(t *testing.T) {
 
 	m.AssertExpectations(t)
 	mockClient.AssertExpectations(t)
+}
+
+func TestRun(t *testing.T) {
+	t.Run("successful run", func(t *testing.T) {
+		mockClient := new(mockCloudWatchClient)
+		mockClient.On("PutMetricData", mock.AnythingOfType("*cloudwatch.PutMetricDataInput")).
+			Return(&cloudwatch.PutMetricDataOutput{}, nil).Times(3)
+
+		c := Config{
+			Namespace: "test",
+			Interval: time.Millisecond * 10,
+			HostId: "test",
+			Metrics: "memory",
+			Once: false,
+			Version: "1.0.0",
+			Client: mockClient,
+		}
+
+		ctx, _ := context.WithTimeout(context.Background(), time.Millisecond * 25)
+		err := Run(c, ctx)
+
+		assert.NoError(t, err)
+		mockClient.AssertExpectations(t)
+	})
+
+	t.Run("failed validation", func(t *testing.T) {
+		mockClient := new(mockCloudWatchClient)
+
+		c := Config{
+			Namespace: "",
+			HostId: "test",
+			Metrics: "memory",
+			Once: false,
+			Version: "1.0.0",
+			Client: mockClient,
+		}
+
+		err := Run(c, context.Background())
+
+		assert.Error(t, err)
+		mockClient.AssertNotCalled(t, "PutMetricData")
+	})
+
 }

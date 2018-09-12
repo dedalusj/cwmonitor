@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/dedalusj/cwmonitor/monitor"
 	"github.com/dedalusj/cwmonitor/util"
 	"github.com/urfave/cli"
@@ -22,6 +26,11 @@ func initLogger(c *cli.Context) {
 }
 
 func getConfig(c *cli.Context) monitor.Config {
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+	client := cloudwatch.New(sess)
+
 	return monitor.Config{
 		Namespace: c.String("namespace"),
 		Interval:  time.Duration(c.Int("interval")) * time.Minute,
@@ -29,7 +38,26 @@ func getConfig(c *cli.Context) monitor.Config {
 		Metrics:   c.String("metrics"),
 		Once:      c.Bool("once"),
 		Version:   c.App.Version,
+		Client:    client,
 	}
+}
+
+func setupCtx() context.Context {
+	ctx, cancel := context.WithCancel(context.Background())
+	sigCh := make(chan os.Signal)
+	signal.Notify(sigCh, os.Interrupt)
+	defer func() {
+		signal.Stop(sigCh)
+		cancel()
+	}()
+	go func() {
+		select {
+		case <-sigCh:
+			cancel()
+		case <-ctx.Done():
+		}
+	}()
+	return ctx
 }
 
 func main() {
@@ -74,7 +102,8 @@ func main() {
 	app.Action = func(c *cli.Context) error {
 		initLogger(c)
 		config := getConfig(c)
-		err := monitor.Exec(config)
+		ctx := setupCtx()
+		err := monitor.Run(config, ctx)
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
