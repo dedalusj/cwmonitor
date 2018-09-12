@@ -215,6 +215,10 @@ func TestMonitor(t *testing.T) {
 
 func TestRun(t *testing.T) {
 	t.Run("successful run", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping integration test")
+		}
+
 		mockClient := new(mockCloudWatchClient)
 		mockClient.On("PutMetricData", mock.AnythingOfType("*cloudwatch.PutMetricDataInput")).
 			Return(&cloudwatch.PutMetricDataOutput{}, nil).Times(3)
