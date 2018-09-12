@@ -35,9 +35,6 @@ coverage:
 
 docker:
 	docker build \
-	  --build-arg "version=${VERSION}" \
-	  --build-arg "git_version=${GIT_VERSION}" \
-	  --build-arg "build_time=${BUILD_TIME}" \
 	  -t "${DOCKER_IMAGE}:${DOCKER_TAG}" .
 
 push: docker

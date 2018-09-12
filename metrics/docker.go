@@ -3,6 +3,7 @@ package metrics
 import (
 	"context"
 	"encoding/json"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -136,7 +137,7 @@ func (d DockerHealth) Gather() (Data, error) {
 		}
 
 		var value = 0.0
-		if c.State != nil && c.State.Health != nil && c.State.Health.Status == "Healthy" {
+		if c.State != nil && c.State.Health != nil && strings.ToLower(c.State.Health.Status) == "healthy" {
 			value = 1.0
 		}
 		healthDataPoint := NewDataPoint("Health", value, UnitCount, dimensions...)

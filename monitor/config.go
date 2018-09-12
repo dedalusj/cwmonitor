@@ -73,7 +73,7 @@ func (c Config) GetRequestedMetrics() []metrics.Metric {
 }
 
 func (c Config) GetExtraDimensions() []metrics.Dimension {
-	extraDimensions, _ := metrics.MapToDimensions(map[string]string{"host": c.HostId})
+	extraDimensions, _ := metrics.MapToDimensions(map[string]string{"Host": c.HostId})
 	return extraDimensions
 }
 

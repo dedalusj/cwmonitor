@@ -1,0 +1,27 @@
+version: "3"
+services:
+  cwmonitor:
+    build: ./
+    image: dedalusj/cwmonitor:latest
+    command: --metrics cpu,memory,disk,swap,docker-stats,docker-health --interval 5 --namespace health --hostid test --debug
+    container_name: cwmonitor
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      AWS_DEFAULT_REGION: "ap-southeast-2"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+  healthy:
+    image: alpine:3.8
+    command: /bin/sh -c "while true; do sleep 1; done"
+    container_name: healthy
+    healthcheck:
+      test: exit 0
+      interval: 5s
+  unhealthy:
+    image: alpine:3.8
+    command: /bin/sh -c "while true; do sleep 1; done"
+    container_name: unhealthy
+    healthcheck:
+      test: exit 1
+      interval: 5s

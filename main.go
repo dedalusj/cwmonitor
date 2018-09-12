@@ -33,7 +33,7 @@ func getConfig(c *cli.Context) monitor.Config {
 
 	return monitor.Config{
 		Namespace: c.String("namespace"),
-		Interval:  time.Duration(c.Int("interval")) * time.Minute,
+		Interval:  time.Duration(c.Int("interval")) * time.Second,
 		HostId:    c.String("hostid"),
 		Metrics:   c.String("metrics"),
 		Once:      c.Bool("once"),
@@ -46,10 +46,6 @@ func setupCtx() context.Context {
 	ctx, cancel := context.WithCancel(context.Background())
 	sigCh := make(chan os.Signal)
 	signal.Notify(sigCh, os.Interrupt)
-	defer func() {
-		signal.Stop(sigCh)
-		cancel()
-	}()
 	go func() {
 		select {
 		case <-sigCh:
@@ -76,7 +72,7 @@ func main() {
 		cli.IntFlag{
 			Name:   "interval",
 			Usage:  "Time interval",
-			Value:  1,
+			Value:  60,
 			EnvVar: "CWMONITOR_INTERVAL",
 		},
 		cli.BoolFlag{
