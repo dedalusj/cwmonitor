@@ -1,18 +1,15 @@
-FROM golang:1.11-alpine
-
-RUN apk --update upgrade \
-  && apk --no-cache --no-progress add git bash make \
-  && rm -rf /var/cache/apk/*
-
-WORKDIR /cwmonitor
-COPY . /cwmonitor
-
-ENV GO111MODULE=on
-
-RUN make build
-
 FROM alpine:3.8
+
+ARG created
+ARG version
+ARG revision
+ARG build_number
+LABEL org.opencontainers.image.created="$created"
+LABEL org.opencontainers.image.version="$version"
+LABEL org.opencontainers.image.revision="$revision"
+LABEL org.opencontainers.image.build_number="$build_number"
+
 RUN apk --no-cache add ca-certificates
 WORKDIR /
-COPY --from=0 /cwmonitor/cwmonitor /cwmonitor
+COPY ./cwmonitor /cwmonitor
 ENTRYPOINT ["/cwmonitor"]

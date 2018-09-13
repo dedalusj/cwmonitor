@@ -41,6 +41,6 @@ deploy:
     on:
       tags: true
   - provider: script
-    script: make push
+    script: make push BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
     on:
       tags: true
