@@ -23,8 +23,34 @@ func computeCpu(stats types.StatsJSON) float64 {
 
 }
 
-type DockerStat struct {
+func GetDimensionsFromContainer(container types.Container) []Dimension {
+	var containerDim Dimension
+	if len(container.Names) > 0 {
+		containerDim, _ = NewDimension("Container", strings.Trim(container.Names[0], "/"))
+	} else {
+		containerDim, _ = NewDimension("Container", container.ID)
+	}
+	return []Dimension{containerDim}
+}
+
+type dockerMetric struct {
 	client client.ContainerAPIClient
+}
+
+func (d dockerMetric) initClient() error {
+	if d.client == nil {
+		cli, err := client.NewEnvClient()
+		if err != nil {
+			return errors.Wrap(err, "failed to create docker client from environment variables")
+		}
+
+		d.client = cli
+	}
+	return nil
+}
+
+type DockerStat struct {
+	dockerMetric
 }
 
 func (d DockerStat) Name() string {
@@ -51,13 +77,8 @@ func (d DockerStat) getStats(containerID string) (types.StatsJSON, error) {
 func (d DockerStat) Gather() (Data, error) {
 	log.Debug("gathering docker stats")
 
-	if d.client == nil {
-		cli, err := client.NewEnvClient()
-		if err != nil {
-			return Data{}, errors.Wrap(err, "failed to create docker client from environment variables")
-		}
-
-		d.client = cli
+	if err := d.initClient(); err != nil {
+		return Data{}, err
 	}
 
 	containers, err := d.client.ContainerList(context.Background(), types.ContainerListOptions{All: false})
@@ -67,14 +88,7 @@ func (d DockerStat) Gather() (Data, error) {
 
 	data := Data{}
 	for _, container := range containers {
-		dimensions := make([]Dimension, 0, 1)
-		var containerName Dimension
-		if len(container.Names) > 0 {
-			containerName, _ = NewDimension("ContainerName", strings.Trim(container.Names[0], "/"))
-		} else {
-			containerName, _ = NewDimension("ContainerName", container.ID)
-		}
-		dimensions = append(dimensions, containerName)
+		dimensions := GetDimensionsFromContainer(container)
 
 		stats, err := d.getStats(container.ID)
 		if err != nil {
@@ -93,7 +107,7 @@ func (d DockerStat) Gather() (Data, error) {
 }
 
 type DockerHealth struct {
-	client client.ContainerAPIClient
+	dockerMetric
 }
 
 func (d DockerHealth) Name() string {
@@ -103,13 +117,8 @@ func (d DockerHealth) Name() string {
 func (d DockerHealth) Gather() (Data, error) {
 	log.Debug("gathering docker health")
 
-	if d.client == nil {
-		cli, err := client.NewEnvClient()
-		if err != nil {
-			return Data{}, errors.Wrap(err, "failed to create docker client from environment variables")
-		}
-
-		d.client = cli
+	if err := d.initClient(); err != nil {
+		return Data{}, err
 	}
 
 	containers, err := d.client.ContainerList(context.Background(), types.ContainerListOptions{All: false})
@@ -119,14 +128,7 @@ func (d DockerHealth) Gather() (Data, error) {
 
 	data := Data{}
 	for _, container := range containers {
-		dimensions := make([]Dimension, 0, 1)
-		var containerName Dimension
-		if len(container.Names) > 0 {
-			containerName, _ = NewDimension("ContainerName", strings.Trim(container.Names[0], "/"))
-		} else {
-			containerName, _ = NewDimension("ContainerName", container.ID)
-		}
-		dimensions = append(dimensions, containerName)
+		dimensions := GetDimensionsFromContainer(container)
 
 		c, err := d.client.ContainerInspect(context.Background(), container.ID)
 		if err != nil {
