@@ -70,7 +70,7 @@ func (d DockerStat) Gather() (Data, error) {
 		dimensions := make([]Dimension, 0, 1)
 		var containerName Dimension
 		if len(container.Names) > 0 {
-			containerName, _ = NewDimension("ContainerName", container.Names[0])
+			containerName, _ = NewDimension("ContainerName", strings.Trim(container.Names[0], "/"))
 		} else {
 			containerName, _ = NewDimension("ContainerName", container.ID)
 		}
@@ -122,7 +122,7 @@ func (d DockerHealth) Gather() (Data, error) {
 		dimensions := make([]Dimension, 0, 1)
 		var containerName Dimension
 		if len(container.Names) > 0 {
-			containerName, _ = NewDimension("ContainerName", container.Names[0])
+			containerName, _ = NewDimension("ContainerName", strings.Trim(container.Names[0], "/"))
 		} else {
 			containerName, _ = NewDimension("ContainerName", container.ID)
 		}

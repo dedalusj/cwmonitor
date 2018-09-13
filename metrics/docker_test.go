@@ -143,6 +143,26 @@ func TestDockerStat_Gather(t *testing.T) {
 		mockClient.AssertExpectations(t)
 	})
 
+	t.Run("strip slashes from container name", func(t *testing.T) {
+		containers := []types.Container{{ID: "c1", Names: []string{"/c1"}, Image: "image"},}
+		stats1 := makeContainerStats(2, 100, 200, 200)
+
+		mockClient := new(DockerMockClient)
+		mockClient.On("ContainerList", types.ContainerListOptions{All: false}).Return(containers, nil)
+		mockClient.On("ContainerStats", "c1", false).Return(stats1, nil)
+
+		expectedDimensions1 := []Dimension{{Name: "ContainerName", Value: "c1"},}
+
+		d := DockerStat{client: mockClient}
+		data, err := d.Gather()
+
+		assert.NoError(t, err)
+		assert.Len(t, data, 2)
+
+		assert.Equal(t, expectedDimensions1, data[0].Dimensions)
+		assert.Equal(t, expectedDimensions1, data[1].Dimensions)
+	})
+
 	t.Run("stats returns error", func(t *testing.T) {
 		containerId := "c"
 		containers := []types.Container{makeContainer(containerId)}
@@ -242,6 +262,25 @@ func TestDockerHealth_Gather(t *testing.T) {
 		assert.Equal(t, expectedDimensions2, data[1].Dimensions)
 
 		mockClient.AssertExpectations(t)
+	})
+
+	t.Run("strip slashes from container name", func(t *testing.T) {
+		containers := []types.Container{{ID: "c1", Names: []string{"/c1"}, Image: "image"},}
+		healthyContainer := makeContainerDetails("Healthy")
+
+		mockClient := new(DockerMockClient)
+		mockClient.On("ContainerList", types.ContainerListOptions{All: false}).Return(containers, nil)
+		mockClient.On("ContainerInspect", "c1").Return(healthyContainer, nil)
+
+		expectedDimensions1 := []Dimension{{Name: "ContainerName", Value: "c1"},}
+
+		d := DockerHealth{client: mockClient}
+		data, err := d.Gather()
+
+		assert.NoError(t, err)
+		assert.Len(t, data, 1)
+
+		assert.Equal(t, expectedDimensions1, data[0].Dimensions)
 	})
 
 	t.Run("error from container inspect", func(t *testing.T) {
