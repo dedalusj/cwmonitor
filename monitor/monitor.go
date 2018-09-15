@@ -93,7 +93,8 @@ func Run(c Config, ctx context.Context) error {
 
 	log.Info("cwmonitor")
 	log.Info("config:")
-	log.Infof("  Version:   %s", c.Version)
+	log.Infof("  Metadata:  %s (version), %s (build time), %s (build number)",
+		c.Metadata.Version, c.Metadata.BuildTime, c.Metadata.BuildNumber)
 	log.Infof("  Metrics:   %s", c.Metrics)
 	log.Infof("  Interval:  %s", c.Interval)
 	log.Infof("  Namespace: %s", c.Namespace)

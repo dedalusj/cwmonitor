@@ -15,7 +15,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var version string
+var version = "dev"
+var buildTime = time.Now().Format("20060102T150405Z")
+var buildNumber = "local"
 
 func initLogger(c *cli.Context) {
 	log.SetFormatter(&util.Formatter{})
@@ -37,7 +39,7 @@ func getConfig(c *cli.Context) monitor.Config {
 		HostId:    c.String("hostid"),
 		Metrics:   c.String("metrics"),
 		Once:      c.Bool("once"),
-		Version:   c.App.Version,
+		Metadata:  util.Metadata{Version: c.App.Version, BuildTime: buildTime, BuildNumber: buildNumber},
 		Client:    client,
 	}
 }

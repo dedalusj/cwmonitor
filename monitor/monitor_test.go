@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/dedalusj/cwmonitor/metrics"
+	"github.com/dedalusj/cwmonitor/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -229,7 +230,7 @@ func TestRun(t *testing.T) {
 			HostId: "test",
 			Metrics: "memory",
 			Once: false,
-			Version: "1.0.0",
+			Metadata: util.Metadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"},
 			Client: mockClient,
 		}
 
@@ -248,7 +249,7 @@ func TestRun(t *testing.T) {
 			HostId: "test",
 			Metrics: "memory",
 			Once: false,
-			Version: "1.0.0",
+			Metadata: util.Metadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"},
 			Client: mockClient,
 		}
 

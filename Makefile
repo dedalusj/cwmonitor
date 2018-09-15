@@ -2,7 +2,6 @@ OUT := cwmonitor
 GIT_REVISION := $(shell git rev-parse HEAD || echo "dev")
 GIT_VERSION := $(shell git describe --always --tags || echo "dev")
 BUILD_TIME := $(shell date -u +"%Y%m%dT%H%M%SZ")
-VERSION := $(GIT_VERSION)-$(BUILD_TIME)
 BUILD_NUMBER := local
 DOCKER_IMAGE := dedalusj/$(OUT)
 DOCKER_TAG := $(GIT_VERSION)
@@ -12,10 +11,12 @@ GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/)
 all: run
 
 build:
-	CGO_ENABLED=0 go build -i -v -o ${OUT} -ldflags="-X main.version=${VERSION}" .
+	CGO_ENABLED=0 go build -i -v -o ${OUT} \
+	    -ldflags="-X main.version=${GIT_VERSION} -X main.buildTime=${BUILD_TIME} -X main.buildNumber=${BUILD_NUMBER}" .
 
 build-linux:
-	CGO_ENABLED=0 GOOS=linux go build -i -v -o ${OUT} -ldflags="-X main.version=${VERSION}" .
+	CGO_ENABLED=0 GOOS=linux go build -i -v -o ${OUT} \
+	    -ldflags="-X main.version=${GIT_VERSION} -X main.buildTime=${BUILD_TIME} -X main.buildNumber=${BUILD_NUMBER}" .
 
 test:
 	@go test -short -v ${PKG_LIST}

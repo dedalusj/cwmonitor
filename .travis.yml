@@ -17,6 +17,11 @@ env:
     - AWS_DEFAULT_REGION=ap-southeast-2
 install: true
 
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
 jobs:
   include:
     - stage: Unit Test
@@ -33,6 +38,8 @@ jobs:
         - make e2e
       if: tag IS present
     - stage: GitHub release
+      script:
+        - make build
       deploy:
         provider: releases
         api_key:
