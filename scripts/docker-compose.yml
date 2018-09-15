@@ -1,9 +1,9 @@
 version: "3"
 services:
   cwmonitor:
-    build: ./
+    build: ..
     image: dedalusj/cwmonitor:latest
-    command: --metrics cpu,memory,disk,swap,docker-stats,docker-health --interval 5 --namespace health --hostid test --debug
+    command: --metrics cpu,memory,disk,swap,docker-stats,docker-health --interval 20 --namespace ${NAMESPACE} --hostid test --debug
     container_name: cwmonitor
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

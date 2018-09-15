@@ -90,6 +90,20 @@ func TestGetDimensionsFromContainer(t *testing.T) {
 	})
 }
 
+func TestDockerMetric_InitClient(t *testing.T) {
+	t.Run("docker-stat init client correctly initialise the docker client", func(t *testing.T) {
+		d := DockerStat{}
+		d.InitClient()
+		assert.NotNil(t, d.client)
+	})
+
+	t.Run("docker-health init client correctly initialise the docker client", func(t *testing.T) {
+		d := DockerHealth{}
+		d.InitClient()
+		assert.NotNil(t, d.client)
+	})
+}
+
 func TestDockerStat_Name(t *testing.T) {
 	d := DockerStat{}
 	assert.Equal(t, "docker-stat", d.Name())

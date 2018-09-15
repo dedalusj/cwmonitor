@@ -48,10 +48,13 @@ docker: build-linux
 	  --build-arg revision=${GIT_REVISION} \
 	  --build-arg build_number=${BUILD_NUMBER} \
 	  -t "${DOCKER_IMAGE}:${DOCKER_TAG}" .
+	docker tag "${DOCKER_IMAGE}:${DOCKER_TAG}" "${DOCKER_IMAGE}:latest"
 
 push: docker
-	docker tag "${DOCKER_IMAGE}:${DOCKER_TAG}" "${DOCKER_IMAGE}:latest"
 	docker push "${DOCKER_IMAGE}:${DOCKER_TAG}"
 	docker push "${DOCKER_IMAGE}:latest"
+
+e2e: docker
+	cd scripts && ./e2e.sh
 
 .PHONY: run build vet lint

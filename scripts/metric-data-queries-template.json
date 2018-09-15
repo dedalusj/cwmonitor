@@ -1,0 +1,314 @@
+[
+  {
+    "Id": "health_healthy",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "Health",
+        "Dimensions": [
+          {
+            "Name": "Container",
+            "Value": "healthy"
+          },
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "health_unhealthy",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "Health",
+        "Dimensions": [
+          {
+            "Name": "Container",
+            "Value": "unhealthy"
+          },
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "cpu_healthy",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "CPUUtilization",
+        "Dimensions": [
+          {
+            "Name": "Container",
+            "Value": "healthy"
+          },
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "cpu_unhealthy",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "CPUUtilization",
+        "Dimensions": [
+          {
+            "Name": "Container",
+            "Value": "unhealthy"
+          },
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "memory_healthy",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "MemoryUtilization",
+        "Dimensions": [
+          {
+            "Name": "Container",
+            "Value": "healthy"
+          },
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "memory_unhealthy",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "MemoryUtilization",
+        "Dimensions": [
+          {
+            "Name": "Container",
+            "Value": "unhealthy"
+          },
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "swapfree_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "SwapFree",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "diskutilization_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "DiskUtilization",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "memoryused_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "MemoryUsed",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "diskused_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "DiskUsed",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "swaputilization_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "SwapUtilization",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "swapused_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "SwapUsed",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "cpuutilization_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "CPUUtilization",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "memoryutilization_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "MemoryUtilization",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "memoryavailable_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "MemoryAvailable",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  },
+  {
+    "Id": "diskfree_host",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "Test",
+        "MetricName": "DiskFree",
+        "Dimensions": [
+          {
+            "Name": "Host",
+            "Value": "test"
+          }
+        ]
+      },
+      "Period": 30,
+      "Stat": "Average"
+    },
+    "ReturnData": true
+  }
+]

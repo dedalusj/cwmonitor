@@ -37,7 +37,7 @@ type dockerMetric struct {
 	client client.ContainerAPIClient
 }
 
-func (d dockerMetric) initClient() error {
+func (d *dockerMetric) InitClient() error {
 	if d.client == nil {
 		cli, err := client.NewEnvClient()
 		if err != nil {
@@ -77,7 +77,7 @@ func (d DockerStat) getStats(containerID string) (types.StatsJSON, error) {
 func (d DockerStat) Gather() (Data, error) {
 	log.Debug("gathering docker stats")
 
-	if err := d.initClient(); err != nil {
+	if err := d.InitClient(); err != nil {
 		return Data{}, err
 	}
 
@@ -117,7 +117,7 @@ func (d DockerHealth) Name() string {
 func (d DockerHealth) Gather() (Data, error) {
 	log.Debug("gathering docker health")
 
-	if err := d.initClient(); err != nil {
+	if err := d.InitClient(); err != nil {
 		return Data{}, err
 	}
 

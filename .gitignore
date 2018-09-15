@@ -1,5 +1,7 @@
 .coverage.out
 cwmonitor
+scripts/metric-data-queries.json
+scripts/metric-data-results.json
 
 .idea/
 .env
