@@ -17,7 +17,7 @@ echo "INFO  |     NAMESPACE:  ${NAMESPACE}"
 
 echo "INFO  | Running cwmonitor and test help containers"
 docker-compose up -d
-timeout 180s docker-compose logs -f
+timeout 180s docker-compose logs -f || true
 docker-compose down
 
 echo "INFO  | Generating metric query json"
@@ -31,13 +31,11 @@ aws cloudwatch get-metric-data \
     --start-time ${START_DATE} \
     --end-time ${END_DATE} | jq -c '.' | tee ${METRIC_DATA_RESULTS_FILE}
 
-EXPECTED_DATA_POINTS=3
 EXPECTED_METRICS=$(jq '.[] | .Id' ${METRIC_DATA_QUERY_FILE} | uniq | wc -l)
-RESULT_METRICS=$(jq --arg n "${EXPECTED_DATA_POINTS}" \
-                    '.MetricDataResults | .[] | select(.Values | length >= $n) | .Id' \
+RESULT_METRICS=$(jq '.MetricDataResults | .[] | select(.Values | length >= 3) | .Id' \
                     ${METRIC_DATA_RESULTS_FILE} | uniq | wc -l)
 if [[ "$EXPECTED_METRICS" -ne "$RESULT_METRICS" ]]; then
-  echo "Expected ${EXPECTED_METRICS} metrics with ${EXPECTED_DATA_POINTS} data points but found ${RESULT_METRICS}"
+  echo "Expected ${EXPECTED_METRICS} metrics with 3 data points but found ${RESULT_METRICS}"
   exit 1
 fi
 

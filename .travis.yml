@@ -14,6 +14,7 @@ env:
     - secure: ArjQQfwMHywB0KzHfHSCmqufL3odQss6lrL1QvtoDCjNXGort8cFBbsNKEUMHubozskX1rwiVXDIJFPXbI9WSwDzitV2jeaggoxNlHKeDLoldLrTw9KowUTimqdeYNxGEKF7IiI8JCgfVD/kcZW8fH59GhCcTHTVn7KdekVXU5zI0YVgWL4wUMD2PlilkggsQeedyMEi4zljccbDmj790dF8oQAuqORFyJQSWrnP1DcggkMLxVs+GgfTkOr53K7vufmi2SWeVd1MVPfG3W7fDYsvufLkQIMmi7LJsXXnFzKb7VbpBN91GIYQv0zTptWCD5VV4fPYr7nJ7cxziD3L9uWbLcKQ91KCs5QkpNKxfO2IDlsL2SAB4dVfla+IXlgo1rFuJPNKE8a/FCnWCK2fzPuJpux8biCb52e5T/tnX16kJoL7/5kKompZtm7JC0rySnVkn25yn91ISraLJCP6OogTJTf3B7zIOWwOIr55uhNeqLLNwNgXPHaSxlgVAmdk1cQvsdazWa75V+t/gwrcO0N0IRHEQwXUeZzvSS0SOgF4Zl6niBCk4K9lfjrlMAkjJ9sbRNADig3Uu4Ol0RNnnguJfxaZrYgSbQHPj6E8zwaIN87I5/4hxs50e9qrC4lopc4Oht3UjtVfX53MeZr4tk23znvSlvRzNChmUIY1h14=
     - secure: FiBRYwo8FVofQp8ltFppxDYuobeKUl3DeEEvf0aFBpAgSyiynih/u2G+dORqP5vn6LuOO8kUFz8IGmpdWp7qmhbXe0Ounh9S0UqgEbYuBMP06ngiNlSY+hTHfU362rl4VZIHpmdS5/+AbXkowrBe8HXpA+iCe2/nrfutfuHrSjzXNuvDopqkL9NuhI6huejFKLU5HWtq0e6OIvLixpkhJx6f9qiiCVwgwZF53oPzdOTOdGvPDAjneo9ixAkrLJBYvht5Vxd7hFtqTN/0UJOGpZH7mSDzZkRGWXGaz0xYuyYyiYVmZlw4Lu3nq+MBj8qbtCa53DOMos+OHr73ioFvXKq5FQCs8aCdcyUrjtOSOg5hLFhEfAxPQdjclG0KBj/7hVGco9nHFaFUSyjC0r6lwT0zbYBKcYcrUomGAy78ZRYHvnsmRzywC4tFmZZyejl6TblTexsy1paiOFNlIs8MPozfxqjWbugevTezvIQgmpH0CJCpwinvqkMHVS7t2vN8eE8aPVchm9c6eA5ZGBIYjzd3ixwa0OYTvpx0TApHeOlYIw1SjxQBC7UiK59bW0vrcjVYpLxVtu0fK7bGwhfTd/wETk2lqkR6Wu+Ugy+ngqI/ZHZTqvdA9poXM3FdPdGWW+8yhP49XX6N9ZoCYvhZSJHUjf6iphViqG3WqbOrqpI=
     - secure: lPwviTSH07hwHm5ES9agguLndc4kQNQNkf7MB4bXIYiuZH8YVpFq1m+mQtUSQS85CXpPCQF7Avb3oBRrdkAb2b0vHeZjWQd8SQGRgXNi4Ic+ksBcrSP91qKtYQk3rIVkhnnJUkj+LpKsdEN1+QecfZlQJ8LRO+i7lnKe4TF5SnbddbNI5G941zeF8xPWz3paNl9clc5PfTZ5PDPmzjUjgjTHipO7Bcy5a/PD5a3Hhq0pvsG0jMHbkX67uyxqsQx4Yv6Vo0rRTg7s0IQBlQncD9vY7KwBwQRa82yR0h0GlMDJLhGBQBRM4dt1YyaMpz1lNfOOxRfTcUj4s/3wn/RDEqA3DZ0j5/JWrS83dmbKIPR33+g/4sxIxpxZ2kH0Bzr86SuGrrlX+xKqoou8dlrr03mDhC7VJ6As9wePmH4zW0kA5AeGg5dfEPn8tQAVuWv3TbrMGnIyuEwlkCgBop/0MD1nR1N73LY5armTk/TO5I/6qmph0uIch/si5unb3/Pkk8m0QydmLKW+JjZq2Y4+brd/NLl2cOT6PSVmSal0ClxyC1olXJJHvV2lJkVzhp3jIQG0UqJ84Tup6e1HFkI3s/BqKuuqfzwoWSFEnj1N3AlnRDVk6nqXFn1ijR0RAMoXdkquLai6mgAyKikvdEfYqLTnGw2Hms/K+joOOO2sj54=
+    - AWS_DEFAULT_REGION=ap-southeast-2
 install: true
 
 jobs:
@@ -27,9 +28,11 @@ jobs:
         - bash <(curl -s https://codecov.io/bash)
     - stage: E2E Test
       script:
+        - sudo apt-get install -y jq
+        - pip install --user awscli
         - make e2e
-#      on:
-#        tags: true
+      on:
+        tags: true
     - stage: GitHub release
       deploy:
         provider: releases
@@ -37,13 +40,13 @@ jobs:
           secure: YmX2RizTuIj9E+82oAd8VVNypMZMcw3myuumPjd+dHXy1MkCSI1GLx5Sqay2EqChGt+45B2Ov/J8VLFGKzPaciAC4aybHc+Q0RZiyIr4slg2bwqsB3HM1k8XUBhPeeSt7hRMZg+vMvDPTDJUFxf/k39XlUbPTGWfTBFeJceZnDUQxpI85xxASDohHg6GP8a/EefDcGyUvjyul68rS0gST2SNFb/f5GsH3potUfGqoJK45EwG16bQlLTYSmAJFEhAH7xNJ6PHcShOgCLrHThZ+LO6857temwfRQmRpvhKJF+W6uJzU1Hhv79rJwnxlhlWDbeWHgyGuDP1sQTbRqH0yHnrY9RXOVXd2LJ8julEe/jMLX948lm9dwx68xSs8zu5b3ve5W6Xz6TXRqrhhxaTCBM9NNkUmRlhcvG5kPYiUrsSFo97w5Go7Q8AYqZhSMy4fME2MjTu66zbn+Typh/a2YdBfcquqesIb/CvTFLV+kuV1raERVZvUd3QcCqtWzgf0s26yhaAF8Rw6qo9l4DX3yuOUAdcBgLSJRral3Y1bxrAjfYvFcbmdxn2POV1uzk+eD00YKH0fpsEkAB5j0yWFgC74DUWbnzOw11tOE1nOFPLwxqhjSKrI+89dgoThs1exSivLTdxcWqfwyreyrBwVAy0DkCsVB2Lp2ZIKzBdiRE=
         file: cwmonitor
         skip_cleanup: true
-        on:
-          tags: true
+      on:
+        tags: true
     - stage: Docker release
       before_deploy:
         - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASSWORD"
       deploy:
         provider: script
         script: make push BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
-        on:
-          tags: true
+      on:
+        tags: true
