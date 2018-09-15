@@ -39,7 +39,7 @@ clean:
 	-@rm ${OUT}
 
 coverage:
-	@go test -coverprofile=.coverage.out -covermode=atomic ${PKG_LIST}
+	@go test -v -coverprofile=.coverage.out -covermode=atomic ${PKG_LIST}
 	@go tool cover -html .coverage.out
 
 docker: build-linux

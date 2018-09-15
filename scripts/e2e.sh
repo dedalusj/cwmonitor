@@ -40,13 +40,13 @@ if [[ "$EXPECTED_METRICS" -ne "$RESULT_METRICS" ]]; then
 fi
 
 if [[ $(jq '.MetricDataResults | .[] | select(.Id | contains("health_healthy")) | .Values | map(select(. == 1)) | length' \
-           ${METRIC_DATA_RESULTS_FILE}) -lt 3 ]]; then
-    echo "Expected to find 3 healthy data points for healthy container"
+           ${METRIC_DATA_RESULTS_FILE}) -lt 2 ]]; then
+    echo "Expected to find at least 2 healthy data points for healthy container"
     exit 1
 fi
 
 if [[ $(jq '.MetricDataResults | .[] | select(.Id | contains("health_unhealthy")) | .Values | map(select(. == 0)) | length' \
            ${METRIC_DATA_RESULTS_FILE}) -lt 3 ]]; then
-    echo "Expected to find 3 unhealthy data points for unhealthy container"
+    echo "Expected to find at least 3 unhealthy data points for unhealthy container"
     exit 1
 fi
