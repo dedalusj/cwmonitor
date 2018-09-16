@@ -67,13 +67,13 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "metrics",
-			Usage:  "Comma separated list of metrics",
+			Usage:  "Comma separated list of metrics. Available: cpu, memory, swap, disk, docker-stats, docker-health",
 			Value:  "cpu,memory",
 			EnvVar: "CWMONITOR_METRICS",
 		},
 		cli.IntFlag{
 			Name:   "interval",
-			Usage:  "Time interval",
+			Usage:  "Time interval between data collection (seconds)",
 			Value:  60,
 			EnvVar: "CWMONITOR_INTERVAL",
 		},
@@ -83,13 +83,13 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:   "namespace",
-			Usage:  "Namespace for the metric data",
+			Usage:  "CloudWatch namespace",
 			Value:  "CWMonitor",
 			EnvVar: "CWMONITOR_NAMESPACE",
 		},
 		cli.StringFlag{
 			Name:   "hostid",
-			Usage:  "ID of the current host",
+			Usage:  "ID of the current host used as dimension for the upload",
 			EnvVar: "CWMONITOR_ID",
 		},
 		cli.BoolFlag{
