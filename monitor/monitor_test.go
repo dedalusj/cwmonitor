@@ -234,7 +234,8 @@ func TestRun(t *testing.T) {
 			Client:    mockClient,
 		}
 
-		ctx, _ := context.WithTimeout(context.Background(), time.Millisecond*25)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*25)
+		defer cancel()
 		err := Run(c, ctx)
 
 		assert.NoError(t, err)
