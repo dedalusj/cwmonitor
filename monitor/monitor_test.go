@@ -68,19 +68,19 @@ func createDataAndExpectedCWInput(numDataPoints int, timestamp time.Time, namesp
 	expected := make([]*cloudwatch.MetricDatum, numDataPoints)
 	for i := range data {
 		p := metrics.Point{
-			Name: strconv.Itoa(i),
-			Unit: metrics.UnitNone,
-			Value: float64(i),
-			Timestamp: timestamp,
+			Name:       strconv.Itoa(i),
+			Unit:       metrics.UnitNone,
+			Value:      float64(i),
+			Timestamp:  timestamp,
 			Dimensions: []metrics.Dimension{{Name: "name", Value: strconv.Itoa(i)}},
 		}
 		data[i] = &p
 
 		cw := cloudwatch.MetricDatum{
 			MetricName: aws.String(strconv.Itoa(i)),
-			Unit: aws.String("None"),
-			Value: aws.Float64(float64(i)),
-			Timestamp: aws.Time(timestamp),
+			Unit:       aws.String("None"),
+			Value:      aws.Float64(float64(i)),
+			Timestamp:  aws.Time(timestamp),
 			Dimensions: []*cloudwatch.Dimension{{Name: aws.String("name"), Value: aws.String(strconv.Itoa(i))}},
 		}
 		expected[i] = &cw
@@ -108,7 +108,7 @@ func TestPut(t *testing.T) {
 
 		mockClient := new(mockCloudWatchClient)
 		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-			Namespace: aws.String(namespace),
+			Namespace:  aws.String(namespace),
 			MetricData: expected,
 		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
@@ -126,11 +126,11 @@ func TestPut(t *testing.T) {
 
 		mockClient := new(mockCloudWatchClient)
 		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-			Namespace: aws.String(namespace),
+			Namespace:  aws.String(namespace),
 			MetricData: expected[:20],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-			Namespace: aws.String(namespace),
+			Namespace:  aws.String(namespace),
 			MetricData: expected[20:],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
@@ -148,11 +148,11 @@ func TestPut(t *testing.T) {
 
 		mockClient := new(mockCloudWatchClient)
 		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-			Namespace: aws.String(namespace),
+			Namespace:  aws.String(namespace),
 			MetricData: expected[:20],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, errors.New("an error")).Once()
 		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-			Namespace: aws.String(namespace),
+			Namespace:  aws.String(namespace),
 			MetricData: expected[20:],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
@@ -171,11 +171,11 @@ func TestPut(t *testing.T) {
 
 		mockClient := new(mockCloudWatchClient)
 		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-			Namespace: aws.String(namespace),
+			Namespace:  aws.String(namespace),
 			MetricData: expected[:20],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, errors.New("first error")).Once()
 		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-			Namespace: aws.String(namespace),
+			Namespace:  aws.String(namespace),
 			MetricData: expected[20:],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, errors.New("second error")).Once()
 
@@ -204,7 +204,7 @@ func TestMonitor(t *testing.T) {
 
 	mockClient := new(mockCloudWatchClient)
 	mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-		Namespace: aws.String(namespace),
+		Namespace:  aws.String(namespace),
 		MetricData: expected,
 	}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
@@ -226,15 +226,15 @@ func TestRun(t *testing.T) {
 
 		c := Config{
 			Namespace: "test",
-			Interval: time.Millisecond * 10,
-			HostId: "test",
-			Metrics: "memory",
-			Once: false,
-			Metadata: util.Metadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"},
-			Client: mockClient,
+			Interval:  time.Millisecond * 10,
+			HostId:    "test",
+			Metrics:   "memory",
+			Once:      false,
+			Metadata:  util.Metadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"},
+			Client:    mockClient,
 		}
 
-		ctx, _ := context.WithTimeout(context.Background(), time.Millisecond * 25)
+		ctx, _ := context.WithTimeout(context.Background(), time.Millisecond*25)
 		err := Run(c, ctx)
 
 		assert.NoError(t, err)
@@ -246,11 +246,11 @@ func TestRun(t *testing.T) {
 
 		c := Config{
 			Namespace: "",
-			HostId: "test",
-			Metrics: "memory",
-			Once: false,
-			Metadata: util.Metadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"},
-			Client: mockClient,
+			HostId:    "test",
+			Metrics:   "memory",
+			Once:      false,
+			Metadata:  util.Metadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"},
+			Client:    mockClient,
 		}
 
 		err := Run(c, context.Background())

@@ -41,7 +41,7 @@ func convertPointToCloudWatch(point *metrics.Point) cloudwatch.MetricDatum {
 
 	for _, dim := range point.Dimensions {
 		datum.Dimensions = append(datum.Dimensions, &cloudwatch.Dimension{
-			Name: aws.String(dim.Name),
+			Name:  aws.String(dim.Name),
 			Value: aws.String(dim.Value),
 		})
 	}
@@ -63,7 +63,7 @@ func PublishDataToCloudWatch(data metrics.Data, client cloudwatchiface.CloudWatc
 	for _, d := range data.Batch(20) {
 		datum := convertDataToCloudWatch(d)
 		_, err := client.PutMetricData(&cloudwatch.PutMetricDataInput{
-			Namespace: aws.String(namespace),
+			Namespace:  aws.String(namespace),
 			MetricData: datum,
 		})
 		if err != nil {

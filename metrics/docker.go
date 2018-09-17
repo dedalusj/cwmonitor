@@ -98,7 +98,7 @@ func (d DockerStat) Gather() (Data, error) {
 
 		cpuUtilization := NewDataPoint("CPUUtilization", computeCpu(stats), UnitPercent, dimensions...)
 		data = append(data, &cpuUtilization)
-		
+
 		memoryUtilization := NewDataPoint("MemoryUtilization", float64(stats.MemoryStats.Usage), UnitBytes, dimensions...)
 		data = append(data, &memoryUtilization)
 	}

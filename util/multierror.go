@@ -44,4 +44,3 @@ func (me *MultiError) ErrorOrNil() error {
 
 	return me
 }
-

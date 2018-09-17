@@ -36,12 +36,12 @@ func (m DockerMockClient) ContainerInspect(ctx context.Context, containerID stri
 }
 
 func makeContainer(containerId string) types.Container {
-	return types.Container{ID: containerId, Names: []string{"name-"+containerId}}
+	return types.Container{ID: containerId, Names: []string{"name-" + containerId}}
 }
 
 func makeContainerDimensions(id string) []Dimension {
 	return []Dimension{
-		{Name: "Container", Value: "name-"+id},
+		{Name: "Container", Value: "name-" + id},
 	}
 }
 
@@ -64,9 +64,9 @@ func makeContainerDetails(healthState string) types.ContainerJSON {
 				Health: &types.Health{Status: healthState},
 			},
 		},
-		Mounts:            []types.MountPoint{},
-		Config:            &container.Config{},
-		NetworkSettings:   &types.NetworkSettings{},
+		Mounts:          []types.MountPoint{},
+		Config:          &container.Config{},
+		NetworkSettings: &types.NetworkSettings{},
 	}
 }
 

@@ -23,4 +23,3 @@ func (c CPU) Gather() (Data, error) {
 	cpuUtilization := NewDataPoint("CPUUtilization", cpuMetrics[0], UnitPercent)
 	return Data([]*Point{&cpuUtilization}), nil
 }
-

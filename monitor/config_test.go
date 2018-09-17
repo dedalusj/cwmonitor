@@ -51,21 +51,21 @@ func TestConfig_Validate(t *testing.T) {
 }
 
 func TestConfig_GetRequestedMetrics(t *testing.T) {
-	testCases := []struct{
+	testCases := []struct {
 		input    string
 		expected []metrics.Metric
 	}{
-		{input: "", expected:[]metrics.Metric{}},
-		{input: "memory", expected:[]metrics.Metric{metrics.Memory{}}},
-		{input: "swap", expected:[]metrics.Metric{metrics.Swap{}}},
-		{input: "cpu", expected:[]metrics.Metric{metrics.CPU{}}},
-		{input: "disk", expected:[]metrics.Metric{metrics.Disk{}}},
-		{input: "docker-stats", expected:[]metrics.Metric{metrics.DockerStat{}}},
-		{input: "docker-health", expected:[]metrics.Metric{metrics.DockerHealth{}}},
-		{input: "cpu,memory", expected:[]metrics.Metric{metrics.CPU{}, metrics.Memory{}}},
-		{input: "cpu,foo", expected:[]metrics.Metric{metrics.CPU{}}},
-		{input: ",", expected:[]metrics.Metric{}},
-		{input: "cpu,", expected:[]metrics.Metric{metrics.CPU{}}},
+		{input: "", expected: []metrics.Metric{}},
+		{input: "memory", expected: []metrics.Metric{metrics.Memory{}}},
+		{input: "swap", expected: []metrics.Metric{metrics.Swap{}}},
+		{input: "cpu", expected: []metrics.Metric{metrics.CPU{}}},
+		{input: "disk", expected: []metrics.Metric{metrics.Disk{}}},
+		{input: "docker-stats", expected: []metrics.Metric{metrics.DockerStat{}}},
+		{input: "docker-health", expected: []metrics.Metric{metrics.DockerHealth{}}},
+		{input: "cpu,memory", expected: []metrics.Metric{metrics.CPU{}, metrics.Memory{}}},
+		{input: "cpu,foo", expected: []metrics.Metric{metrics.CPU{}}},
+		{input: ",", expected: []metrics.Metric{}},
+		{input: "cpu,", expected: []metrics.Metric{metrics.CPU{}}},
 	}
 
 	for i, tc := range testCases {

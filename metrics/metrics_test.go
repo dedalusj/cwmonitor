@@ -120,7 +120,7 @@ func TestData_Batch(t *testing.T) {
 	t.Run("batched", func(t *testing.T) {
 		data := Data{}
 		for i := 0; i <= 6; i++ {
-			data = append(data,  &Point{Name: strconv.Itoa(i)})
+			data = append(data, &Point{Name: strconv.Itoa(i)})
 		}
 
 		batches := data.Batch(3)
