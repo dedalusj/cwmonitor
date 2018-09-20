@@ -56,6 +56,6 @@ push: docker
 	docker push "${DOCKER_IMAGE}:latest"
 
 e2e: docker
-	cd scripts && ./e2e.sh
+	cd e2e && ./e2e.sh
 
 .PHONY: run build vet lint
