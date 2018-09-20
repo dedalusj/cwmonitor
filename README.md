@@ -24,7 +24,7 @@ Run it with `./cwmonitor --metrics cpu,memory --interval 60 --namespace a_namesp
 
 Available metrics are: `cpu, memory, swap, disk, docker-health, docker-stats`.
 
-Use `./cwmonitor --help` to see a description of the other command line arguments.
+Use `./cwmonitor --help` to see a description of the other command line arguments. All the command line options can be set via environment variables by prefixing `CWMONITOR_` to the capitalized version of the cli option, e.g. `--metrics` becomes `CWMONITOR_METRICS`.
 
 ### Docker
 
