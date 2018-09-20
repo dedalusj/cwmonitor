@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/dedalusj/cwmonitor/monitor"
 	"github.com/dedalusj/cwmonitor/util"
-	"github.com/urfave/cli"
+	"gopkg.in/urfave/cli.v1"
 
 	log "github.com/sirupsen/logrus"
 )
