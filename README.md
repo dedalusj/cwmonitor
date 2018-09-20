@@ -30,5 +30,6 @@ Use `./cwmonitor --help` to see a description of the other command line argument
 
 CWMonitor is also available as a docker image and can be run with
 
-    docker run --rm --name=cwmonitor dedalusj/cwmonitor --metrics cpu,memory --interval 60 --namespace a_namespace --hostid "$(hostname)"
+    docker run --rm --name=cwmonitor -v /var/run/docker.sock:/var/run/docker.sock \
+        dedalusj/cwmonitor --metrics cpu,memory --interval 60 --namespace a_namespace --hostid "$(hostname)"
 
