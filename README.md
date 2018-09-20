@@ -22,7 +22,7 @@ Download the binary from the [GitHub release](https://github.com/dedalusj/cwmoni
 
 Run it with `./cwmonitor --metrics cpu,memory --interval 60 --namespace a_namespace --hostid "$(hostname)"`
 
-Available metrics are: `cpu, memory, swap, disk, docker-health, docmer-stats`.
+Available metrics are: `cpu, memory, swap, disk, docker-health, docker-stats`.
 
 Use `./cwmonitor --help` to see a description of the other command line arguments.
 
