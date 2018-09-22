@@ -67,6 +67,11 @@ func main() {
 	app.Author = "Jacopo Sabbatini"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
+			Name:   "hostid",
+			Usage:  "ID of the current host used as dimension for the upload (required)",
+			EnvVar: "CWMONITOR_ID",
+		},
+		cli.StringFlag{
 			Name:   "metrics",
 			Usage:  "Comma separated list of metrics. Available: cpu, memory, swap, disk, docker-stats, docker-health",
 			Value:  "cpu,memory",
@@ -74,8 +79,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:   "metrics.dockerlabel",
-			Usage:  "Container label to be used in place of container name for the CloudWatch dimension. " +
-				    "Ignored if not docker metrics are selected.",
+			Usage:  "Container label to be used in place of container name for the CloudWatch dimension",
 			EnvVar: "CWMONITOR_METRICS_DOCKERLABEL",
 		},
 		cli.IntFlag{
@@ -84,20 +88,15 @@ func main() {
 			Value:  60,
 			EnvVar: "CWMONITOR_INTERVAL",
 		},
-		cli.BoolFlag{
-			Name:  "once",
-			Usage: "Run once (i.e. not on an interval)",
-		},
 		cli.StringFlag{
 			Name:   "namespace",
 			Usage:  "CloudWatch namespace",
 			Value:  "CWMonitor",
 			EnvVar: "CWMONITOR_NAMESPACE",
 		},
-		cli.StringFlag{
-			Name:   "hostid",
-			Usage:  "ID of the current host used as dimension for the upload (required)",
-			EnvVar: "CWMONITOR_ID",
+		cli.BoolFlag{
+			Name:  "once",
+			Usage: "Run once (i.e. not on an interval)",
 		},
 		cli.BoolFlag{
 			Name:  "debug",

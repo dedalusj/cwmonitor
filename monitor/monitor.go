@@ -93,10 +93,11 @@ func Run(c Config, m util.AppMetadata, ctx context.Context) error {
 
 	log.Infof("cwmonitor -- %s (version), %s (build time), %s (build number)", m.Version, m.BuildTime, m.BuildNumber)
 	log.Info("config:")
-	log.Infof("  Metrics:   %s", c.Metrics)
+	log.Infof("  HostId:    %s", c.HostId)
 	log.Infof("  Interval:  %s", c.Interval)
 	log.Infof("  Namespace: %s", c.Namespace)
-	log.Infof("  HostId:    %s", c.HostId)
+	log.Infof("  Metrics:   %s", c.Metrics)
+	log.Infof("  Metrics.DockerLabel: %s", c.DockerLabel)
 
 	log.Info("starting monitoring")
 	Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), c.Client, c.Namespace)
