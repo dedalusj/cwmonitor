@@ -215,6 +215,8 @@ func TestMonitor(t *testing.T) {
 }
 
 func TestRun(t *testing.T) {
+	metadata := util.AppMetadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"}
+
 	t.Run("successful run", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping integration test")
@@ -230,13 +232,12 @@ func TestRun(t *testing.T) {
 			HostId:    "test",
 			Metrics:   "memory",
 			Once:      false,
-			Metadata:  util.Metadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"},
 			Client:    mockClient,
 		}
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*25)
 		defer cancel()
-		err := Run(c, ctx)
+		err := Run(c, metadata, ctx)
 
 		assert.NoError(t, err)
 		mockClient.AssertExpectations(t)
@@ -250,11 +251,10 @@ func TestRun(t *testing.T) {
 			HostId:    "test",
 			Metrics:   "memory",
 			Once:      false,
-			Metadata:  util.Metadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"},
 			Client:    mockClient,
 		}
 
-		err := Run(c, context.Background())
+		err := Run(c, metadata, context.Background())
 
 		assert.Error(t, err)
 		mockClient.AssertNotCalled(t, "PutMetricData")

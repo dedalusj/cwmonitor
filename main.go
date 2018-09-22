@@ -39,7 +39,6 @@ func getConfig(c *cli.Context) monitor.Config {
 		HostId:    c.String("hostid"),
 		Metrics:   c.String("metrics"),
 		Once:      c.Bool("once"),
-		Metadata:  util.Metadata{Version: c.App.Version, BuildTime: buildTime, BuildNumber: buildNumber},
 		Client:    client,
 	}
 }
@@ -59,6 +58,7 @@ func setupCtx() context.Context {
 }
 
 func main() {
+	metadata := util.AppMetadata{Version: version, BuildTime: buildTime, BuildNumber: buildNumber}
 	app := cli.NewApp()
 	app.Name = "cwmonitor"
 	app.Usage = "Publish Custom Metrics to CloudWatch"
@@ -89,7 +89,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:   "hostid",
-			Usage:  "ID of the current host used as dimension for the upload",
+			Usage:  "ID of the current host used as dimension for the upload (required)",
 			EnvVar: "CWMONITOR_ID",
 		},
 		cli.BoolFlag{
@@ -101,7 +101,7 @@ func main() {
 		initLogger(c)
 		config := getConfig(c)
 		ctx := setupCtx()
-		err := monitor.Run(config, ctx)
+		err := monitor.Run(config, metadata, ctx)
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}

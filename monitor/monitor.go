@@ -85,16 +85,14 @@ func Monitor(metrics []metrics.Metric, extraDimensions []metrics.Dimension, clie
 	}
 }
 
-func Run(c Config, ctx context.Context) error {
+func Run(c Config, m util.AppMetadata, ctx context.Context) error {
 	err := c.Validate()
 	if err != nil {
 		return errors.Wrap(err, "invalid inputs")
 	}
 
-	log.Info("cwmonitor")
+	log.Infof("cwmonitor -- %s (version), %s (build time), %s (build number)", m.Version, m.BuildTime, m.BuildNumber)
 	log.Info("config:")
-	log.Infof("  Metadata:  %s (version), %s (build time), %s (build number)",
-		c.Metadata.Version, c.Metadata.BuildTime, c.Metadata.BuildNumber)
 	log.Infof("  Metrics:   %s", c.Metrics)
 	log.Infof("  Interval:  %s", c.Interval)
 	log.Infof("  Namespace: %s", c.Namespace)

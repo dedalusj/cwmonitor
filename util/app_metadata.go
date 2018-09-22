@@ -1,6 +1,6 @@
 package util
 
-type Metadata struct {
+type AppMetadata struct {
 	Version     string
 	BuildTime   string
 	BuildNumber string

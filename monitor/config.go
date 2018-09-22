@@ -18,7 +18,6 @@ type Config struct {
 	HostId    string
 	Metrics   string
 	Once      bool
-	Metadata  util.Metadata
 	Client    cloudwatchiface.CloudWatchAPI
 }
 
