@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/dedalusj/cwmonitor/metrics"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -192,25 +193,57 @@ func TestMonitor(t *testing.T) {
 	namespace := "a namespace"
 	extraDimension := metrics.Dimension{Name: "id", Value: "localhost"}
 
-	data, expected := createDataAndExpectedCWInput(numDataPoints, timestamp, namespace)
-	for _, e := range expected {
-		d := cloudwatch.Dimension{Name: aws.String(extraDimension.Name), Value: aws.String(extraDimension.Value)}
-		e.Dimensions = append(e.Dimensions, &d)
-	}
+	t.Run("successful", func(t *testing.T) {
+		hook := test.NewGlobal()
 
-	m := new(mockMetric)
-	m.On("Gather").Return(metrics.Data(data), nil)
+		data, expected := createDataAndExpectedCWInput(numDataPoints, timestamp, namespace)
+		for _, e := range expected {
+			d := cloudwatch.Dimension{Name: aws.String(extraDimension.Name), Value: aws.String(extraDimension.Value)}
+			e.Dimensions = append(e.Dimensions, &d)
+		}
 
-	mockClient := new(mockCloudWatchClient)
-	mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
-		Namespace:  aws.String(namespace),
-		MetricData: expected,
-	}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
+		m := new(mockMetric)
+		m.On("Gather").Return(metrics.Data(data), nil)
 
-	Monitor([]metrics.Metric{m}, []metrics.Dimension{extraDimension}, mockClient, namespace)
+		mockClient := new(mockCloudWatchClient)
+		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
+			Namespace:  aws.String(namespace),
+			MetricData: expected,
+		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
-	m.AssertExpectations(t)
-	mockClient.AssertExpectations(t)
+		Monitor([]metrics.Metric{m}, []metrics.Dimension{extraDimension}, mockClient, namespace)
+
+		m.AssertExpectations(t)
+		mockClient.AssertExpectations(t)
+
+		assert.Contains(t, hook.LastEntry().Message, namespace)
+	})
+
+	t.Run("failed put logs error", func(t *testing.T) {
+		hook := test.NewGlobal()
+
+		data, expected := createDataAndExpectedCWInput(numDataPoints, timestamp, namespace)
+		for _, e := range expected {
+			d := cloudwatch.Dimension{Name: aws.String(extraDimension.Name), Value: aws.String(extraDimension.Value)}
+			e.Dimensions = append(e.Dimensions, &d)
+		}
+
+		m := new(mockMetric)
+		m.On("Gather").Return(metrics.Data(data), nil)
+
+		mockClient := new(mockCloudWatchClient)
+		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{
+			Namespace:  aws.String(namespace),
+			MetricData: expected,
+		}).Return(&cloudwatch.PutMetricDataOutput{}, errors.New("an error")).Once()
+
+		Monitor([]metrics.Metric{m}, []metrics.Dimension{extraDimension}, mockClient, namespace)
+
+		m.AssertExpectations(t)
+		mockClient.AssertExpectations(t)
+
+		assert.Contains(t, hook.LastEntry().Message, "an error")
+	})
 }
 
 func TestRun(t *testing.T) {
