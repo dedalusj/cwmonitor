@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 	"github.com/dedalusj/cwmonitor/metrics"
-	"github.com/dedalusj/cwmonitor/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -215,8 +214,6 @@ func TestMonitor(t *testing.T) {
 }
 
 func TestRun(t *testing.T) {
-	metadata := util.AppMetadata{Version: "1.0.0", BuildTime: "now", BuildNumber: "local"}
-
 	t.Run("successful run", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping integration test")
@@ -237,7 +234,7 @@ func TestRun(t *testing.T) {
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*25)
 		defer cancel()
-		err := Run(c, metadata, ctx)
+		err := Run(c, ctx)
 
 		assert.NoError(t, err)
 		mockClient.AssertExpectations(t)
@@ -254,7 +251,7 @@ func TestRun(t *testing.T) {
 			Client:    mockClient,
 		}
 
-		err := Run(c, metadata, context.Background())
+		err := Run(c, context.Background())
 
 		assert.Error(t, err)
 		mockClient.AssertNotCalled(t, "PutMetricData")

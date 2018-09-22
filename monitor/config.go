@@ -80,3 +80,14 @@ func (c Config) GetExtraDimensions() []metrics.Dimension {
 func (c Config) GetTicker() *time.Ticker {
 	return time.NewTicker(c.Interval)
 }
+
+func (c Config) LogConfig() {
+	log.Info("config:")
+	log.Infof("  HostId:    %s", c.HostId)
+	log.Infof("  Interval:  %s", c.Interval)
+	log.Infof("  Namespace: %s", c.Namespace)
+	log.Infof("  Metrics:   %s", c.Metrics)
+	if c.DockerLabel != "" {
+		log.Infof("  Metrics.DockerLabel: %s", c.DockerLabel)
+	}
+}

@@ -2,10 +2,12 @@ package monitor
 
 import (
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/dedalusj/cwmonitor/metrics"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -84,4 +86,27 @@ func TestConfig_GetExtraDimensions(t *testing.T) {
 	assert.Len(t, dim, 1)
 	assert.Equal(t, dim[0].Name, "Host")
 	assert.Equal(t, dim[0].Value, "id")
+}
+
+func TestConfig_LogConfig(t *testing.T) {
+	hook := test.NewGlobal()
+	Config{
+		Namespace:   "namespace",
+		Interval:    time.Second * 30,
+		HostId:      "id",
+		Metrics:     "cpu,memory",
+		DockerLabel: "a_label",
+	}.LogConfig()
+
+	messages := make([]string, len(hook.AllEntries()))
+	for i, e := range hook.AllEntries() {
+		messages[i] = e.Message
+	}
+	logOutput := strings.Join(messages, "\n")
+
+	assert.Contains(t, logOutput, "namespace")
+	assert.Contains(t, logOutput, "30s")
+	assert.Contains(t, logOutput, "id")
+	assert.Contains(t, logOutput, "cpu,memory")
+	assert.Contains(t, logOutput, "a_label")
 }
