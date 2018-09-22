@@ -97,7 +97,9 @@ func Run(c Config, m util.AppMetadata, ctx context.Context) error {
 	log.Infof("  Interval:  %s", c.Interval)
 	log.Infof("  Namespace: %s", c.Namespace)
 	log.Infof("  Metrics:   %s", c.Metrics)
-	log.Infof("  Metrics.DockerLabel: %s", c.DockerLabel)
+	if c.DockerLabel != "" {
+		log.Infof("  Metrics.DockerLabel: %s", c.DockerLabel)
+	}
 
 	log.Info("starting monitoring")
 	Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), c.Client, c.Namespace)
