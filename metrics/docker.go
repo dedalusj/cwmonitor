@@ -23,9 +23,11 @@ func computeCpu(stats types.StatsJSON) float64 {
 
 }
 
-func GetDimensionsFromContainer(container types.Container) []Dimension {
+func GetDimensionsFromContainer(container types.Container, label string) []Dimension {
 	var containerDim Dimension
-	if len(container.Names) > 0 {
+	if value, ok := container.Labels[label]; ok {
+		containerDim, _ = NewDimension("Container", value)
+	} else if len(container.Names) > 0 {
 		containerDim, _ = NewDimension("Container", strings.Trim(container.Names[0], "/"))
 	} else {
 		containerDim, _ = NewDimension("Container", container.ID)
@@ -51,6 +53,8 @@ func (d *dockerMetric) InitClient() error {
 
 type DockerStat struct {
 	dockerMetric
+
+	Label string
 }
 
 func (d DockerStat) Name() string {
@@ -88,7 +92,7 @@ func (d DockerStat) Gather() (Data, error) {
 
 	data := Data{}
 	for _, container := range containers {
-		dimensions := GetDimensionsFromContainer(container)
+		dimensions := GetDimensionsFromContainer(container, d.Label)
 
 		stats, err := d.getStats(container.ID)
 		if err != nil {
@@ -108,6 +112,8 @@ func (d DockerStat) Gather() (Data, error) {
 
 type DockerHealth struct {
 	dockerMetric
+
+	Label string
 }
 
 func (d DockerHealth) Name() string {
@@ -128,7 +134,7 @@ func (d DockerHealth) Gather() (Data, error) {
 
 	data := Data{}
 	for _, container := range containers {
-		dimensions := GetDimensionsFromContainer(container)
+		dimensions := GetDimensionsFromContainer(container, d.Label)
 
 		c, err := d.client.ContainerInspect(context.Background(), container.ID)
 		if err != nil {

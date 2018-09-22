@@ -34,12 +34,13 @@ func getConfig(c *cli.Context) monitor.Config {
 	client := cloudwatch.New(sess)
 
 	return monitor.Config{
-		Namespace: c.String("namespace"),
-		Interval:  time.Duration(c.Int("interval")) * time.Second,
-		HostId:    c.String("hostid"),
-		Metrics:   c.String("metrics"),
-		Once:      c.Bool("once"),
-		Client:    client,
+		Namespace:   c.String("namespace"),
+		Interval:    time.Duration(c.Int("interval")) * time.Second,
+		HostId:      c.String("hostid"),
+		Metrics:     c.String("metrics"),
+		DockerLabel: c.String("metrics.dockerlabel"),
+		Once:        c.Bool("once"),
+		Client:      client,
 	}
 }
 
@@ -70,6 +71,12 @@ func main() {
 			Usage:  "Comma separated list of metrics. Available: cpu, memory, swap, disk, docker-stats, docker-health",
 			Value:  "cpu,memory",
 			EnvVar: "CWMONITOR_METRICS",
+		},
+		cli.StringFlag{
+			Name:   "metrics.dockerlabel",
+			Usage:  "Container label to be used in place of container name for the CloudWatch dimension. " +
+				    "Ignored if not docker metrics are selected.",
+			EnvVar: "CWMONITOR_METRICS_DOCKERLABEL",
 		},
 		cli.IntFlag{
 			Name:   "interval",

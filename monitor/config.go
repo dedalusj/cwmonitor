@@ -13,12 +13,13 @@ import (
 )
 
 type Config struct {
-	Namespace string
-	Interval  time.Duration
-	HostId    string
-	Metrics   string
-	Once      bool
-	Client    cloudwatchiface.CloudWatchAPI
+	Namespace   string
+	Interval    time.Duration
+	HostId      string
+	Metrics     string
+	DockerLabel string
+	Once        bool
+	Client      cloudwatchiface.CloudWatchAPI
 }
 
 func (c Config) Validate() error {
@@ -58,9 +59,9 @@ func (c Config) GetRequestedMetrics() []metrics.Metric {
 		case "cpu":
 			collectedMetrics = append(collectedMetrics, metrics.CPU{})
 		case "docker-stats":
-			collectedMetrics = append(collectedMetrics, metrics.DockerStat{})
+			collectedMetrics = append(collectedMetrics, metrics.DockerStat{Label: c.DockerLabel})
 		case "docker-health":
-			collectedMetrics = append(collectedMetrics, metrics.DockerHealth{})
+			collectedMetrics = append(collectedMetrics, metrics.DockerHealth{Label: c.DockerLabel})
 		case "":
 			continue
 		default:
