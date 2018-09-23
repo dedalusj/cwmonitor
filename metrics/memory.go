@@ -7,12 +7,18 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// The Memory metric gather memory usage statistics from the host machine
 type Memory struct{}
 
+// Name for the Memory metric
 func (m Memory) Name() string {
 	return "memory"
 }
 
+// Gather memory usage statistics from the host machine and return the following data points
+// - MemoryUtilization (percent)
+// - MemoryUsed (bytes)
+// - MemoryAvailable (bytes)
 func (m Memory) Gather() (Data, error) {
 	log.Debug("gathering memory info")
 	memoryMetrics, err := mem.VirtualMemory()

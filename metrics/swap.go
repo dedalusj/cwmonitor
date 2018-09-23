@@ -7,12 +7,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// The Swap metric gather swap usage statistics from the host machine
 type Swap struct{}
 
+// Name of the swap metric
 func (s Swap) Name() string {
 	return "swap"
 }
 
+// Gather swap usage statistics from the host machine and return data points
+// for SwapUtilization (percent), SwapUsed (bytes) and SwapFree (bytes)
 func (s Swap) Gather() (Data, error) {
 	log.Debug("gathering swap info")
 	swapMetrics, err := mem.SwapMemory()

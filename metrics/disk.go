@@ -7,12 +7,18 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// The Disk metric gather disk usage statistics from the host machine
 type Disk struct{}
 
+// Name of the disk metric
 func (d Disk) Name() string {
 	return "disk"
 }
 
+// Gather disk usage statistics and return the following data points
+// - DiskUtilization (percent)
+// - DiskUsed (bytes)
+// - DiskFree (bytes)
 func (d Disk) Gather() (Data, error) {
 	log.Debug("gathering disk info")
 	diskMetrics, err := disk.Usage("/")
