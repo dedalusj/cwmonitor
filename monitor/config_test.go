@@ -26,11 +26,11 @@ func TestConfig_Validate(t *testing.T) {
 		assert.Contains(t, err.Error(), "interval")
 	})
 
-	t.Run("validates id", func(t *testing.T) {
+	t.Run("validates hostid", func(t *testing.T) {
 		c := Config{}
 		err := c.Validate()
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "id")
+		assert.Contains(t, err.Error(), "hostid")
 	})
 
 	t.Run("validates metrics", func(t *testing.T) {

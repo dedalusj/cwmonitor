@@ -132,7 +132,8 @@ func TestDockerStat_Name(t *testing.T) {
 func TestDockerStat_Gather(t *testing.T) {
 	t.Run("empty container list", func(t *testing.T) {
 		mockClient := new(DockerMockClient)
-		mockClient.On("ContainerList", types.ContainerListOptions{All: false}).Return([]types.Container{}, nil)
+		mockClient.On("ContainerList", types.ContainerListOptions{All: false}).
+			Return([]types.Container{}, nil)
 
 		d := DockerStat{dockerMetric: dockerMetric{client: mockClient}, Label: ""}
 		data, err := d.Gather()
@@ -144,7 +145,8 @@ func TestDockerStat_Gather(t *testing.T) {
 
 	t.Run("error for container list", func(t *testing.T) {
 		mockClient := new(DockerMockClient)
-		mockClient.On("ContainerList", types.ContainerListOptions{All: false}).Return([]types.Container{}, errors.New("an error"))
+		mockClient.On("ContainerList", types.ContainerListOptions{All: false}).
+			Return([]types.Container{}, errors.New("an error"))
 
 		d := DockerStat{dockerMetric: dockerMetric{client: mockClient}, Label: ""}
 		data, err := d.Gather()
