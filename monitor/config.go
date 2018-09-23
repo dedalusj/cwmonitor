@@ -12,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Config gathers all the necessary data needed by the monitor command
 type Config struct {
 	Namespace   string
 	Interval    time.Duration
@@ -22,7 +23,7 @@ type Config struct {
 	Client      cloudwatchiface.CloudWatchAPI
 }
 
-func (c Config) Validate() error {
+func (c Config) validate() error {
 	err := util.MultiError{}
 
 	if c.Namespace == "" {
@@ -41,7 +42,7 @@ func (c Config) Validate() error {
 	return err.ErrorOrNil()
 }
 
-func (c Config) GetRequestedMetrics() []metrics.Metric {
+func (c Config) getRequestedMetrics() []metrics.Metric {
 	metricsSet := map[string]bool{}
 	for _, m := range strings.Split(c.Metrics, ",") {
 		metricsSet[m] = true
@@ -72,16 +73,16 @@ func (c Config) GetRequestedMetrics() []metrics.Metric {
 	return collectedMetrics
 }
 
-func (c Config) GetExtraDimensions() []metrics.Dimension {
+func (c Config) getExtraDimensions() []metrics.Dimension {
 	extraDimensions, _ := metrics.MapToDimensions(map[string]string{"Host": c.HostId})
 	return extraDimensions
 }
 
-func (c Config) GetTicker() *time.Ticker {
+func (c Config) getTicker() *time.Ticker {
 	return time.NewTicker(c.Interval)
 }
 
-func (c Config) LogConfig() {
+func (c Config) logConfig() {
 	log.Info("config:")
 	log.Infof("  HostId:    %s", c.HostId)
 	log.Infof("  Interval:  %s", c.Interval)

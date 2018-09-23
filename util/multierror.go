@@ -5,42 +5,46 @@ import (
 	"strings"
 )
 
+// MultiError allows to collect and format multiple errors at once
 type MultiError struct {
 	Errors []error
 }
 
-func (me *MultiError) Add(err error) {
+// Add the given error to the current MultiError if not nil
+func (m *MultiError) Add(err error) {
 	if err == nil {
 		return
 	}
-	if me.Errors == nil {
-		me.Errors = make([]error, 0, 5)
+	if m.Errors == nil {
+		m.Errors = make([]error, 0, 5)
 	}
-	me.Errors = append(me.Errors, err)
+	m.Errors = append(m.Errors, err)
 }
 
-func (me MultiError) Error() string {
-	if len(me.Errors) == 1 {
-		return fmt.Sprintf("1 error occurred:\n\t* %s\n", me.Errors[0])
+func (m MultiError) Error() string {
+	if len(m.Errors) == 1 {
+		return fmt.Sprintf("1 error occurred:\n\t* %s\n", m.Errors[0])
 	}
 
-	points := make([]string, len(me.Errors))
-	for i, err := range me.Errors {
+	points := make([]string, len(m.Errors))
+	for i, err := range m.Errors {
 		points[i] = fmt.Sprintf("* %s", err)
 	}
 
 	return fmt.Sprintf(
 		"%d errors occurred:\n\t%s\n",
-		len(me.Errors), strings.Join(points, "\n\t"))
+		len(m.Errors), strings.Join(points, "\n\t"))
 }
 
-func (me *MultiError) ErrorOrNil() error {
-	if me == nil {
+// ErrorOrNil returns nil if the MultiError is nil or no errors were attached to it
+// otherwise returns the current MultiError
+func (m *MultiError) ErrorOrNil() error {
+	if m == nil {
 		return nil
 	}
-	if len(me.Errors) == 0 {
+	if len(m.Errors) == 0 {
 		return nil
 	}
 
-	return me
+	return m
 }

@@ -23,6 +23,11 @@ func computeCpu(stats types.StatsJSON) float64 {
 
 }
 
+// GetDimensionsFromContainer is a utility function to construct dimensions from a container
+// It creates a Dimension with name Container and value given by the following rules in order:
+// - the value of the requested label if present for the container
+// - the name of the container if present
+// - the id of the container
 func GetDimensionsFromContainer(container types.Container, label string) []Dimension {
 	var containerDim Dimension
 	if value, ok := container.Labels[label]; ok {
@@ -39,7 +44,7 @@ type dockerMetric struct {
 	client client.ContainerAPIClient
 }
 
-func (d *dockerMetric) InitClient() error {
+func (d *dockerMetric) initClient() error {
 	if d.client == nil {
 		cli, err := client.NewEnvClient()
 		if err != nil {
@@ -51,12 +56,14 @@ func (d *dockerMetric) InitClient() error {
 	return nil
 }
 
+// DockerStat collects docker statistics from the running containers
 type DockerStat struct {
 	dockerMetric
 
 	Label string
 }
 
+// Name of the DockerStat metric
 func (d DockerStat) Name() string {
 	return "docker-stat"
 }
@@ -78,10 +85,14 @@ func (d DockerStat) getStats(containerID string) (types.StatsJSON, error) {
 	return *v, nil
 }
 
+// Gather statistics from the running containers. It will return data for the CPUUtilization (percent)
+// and MemoryUtilization (bytes) for every container or error if the list of containers cannot be fetched.
+// If gathering statistics for a container fails the respective data points will not be returned
+// and a warning will be logged
 func (d DockerStat) Gather() (Data, error) {
 	log.Debug("gathering docker stats")
 
-	if err := d.InitClient(); err != nil {
+	if err := d.initClient(); err != nil {
 		return Data{}, err
 	}
 
@@ -110,20 +121,25 @@ func (d DockerStat) Gather() (Data, error) {
 	return data, nil
 }
 
+// DockerHealth collects docker health from running containers
 type DockerHealth struct {
 	dockerMetric
 
 	Label string
 }
 
+// Name of the DockerHealth metric
 func (d DockerHealth) Name() string {
 	return "docker-health"
 }
 
+// Gather the health status from running containers or error if unable to get a list of running containers.
+// If a container does not have a HealthCheck defined it will be reported as unhealthy. If inspection for
+// a running container fails the respective data will not be reported and a warning will be logged.
 func (d DockerHealth) Gather() (Data, error) {
 	log.Debug("gathering docker health")
 
-	if err := d.InitClient(); err != nil {
+	if err := d.initClient(); err != nil {
 		return Data{}, err
 	}
 

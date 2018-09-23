@@ -24,6 +24,11 @@ func TestNewDimension(t *testing.T) {
 		_, err := NewDimension("", "1")
 		assert.Error(t, err)
 	})
+
+	t.Run("blank name", func(t *testing.T) {
+		_, err := NewDimension("   ", "1")
+		assert.Error(t, err)
+	})
 }
 
 func TestMapToDimension(t *testing.T) {

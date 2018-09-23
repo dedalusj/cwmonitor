@@ -108,7 +108,7 @@ func main() {
 		initLogger(c)
 		config := getConfig(c)
 		ctx := setupCtx()
-		err := monitor.Run(config, ctx)
+		err := monitor.Run(ctx, config)
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}

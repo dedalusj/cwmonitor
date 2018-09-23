@@ -14,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// GatherData collects data for the given metrics
 func GatherData(collectedMetrics []metrics.Metric) metrics.Data {
 	log.Debugf("gathering data for %d metrics", len(collectedMetrics))
 	data := metrics.Data{}
@@ -57,7 +58,9 @@ func convertDataToCloudWatch(data metrics.Data) []*cloudwatch.MetricDatum {
 	return output
 }
 
-func PublishDataToCloudWatch(data metrics.Data, client cloudwatchiface.CloudWatchAPI, namespace string) error {
+// PublishDataToCloudWatch publish the given data to CloudWatch
+// under the provided namespace using the given client
+func PublishDataToCloudWatch(data metrics.Data, namespace string, client cloudwatchiface.CloudWatchAPI) error {
 	log.Debug("publishing data points")
 	multierror := util.MultiError{}
 	for _, d := range data.Batch(20) {
@@ -74,10 +77,12 @@ func PublishDataToCloudWatch(data metrics.Data, client cloudwatchiface.CloudWatc
 	return errors.Wrap(multierror.ErrorOrNil(), "failed to put metric data")
 }
 
-func Monitor(metrics []metrics.Metric, extraDimensions []metrics.Dimension, client cloudwatchiface.CloudWatchAPI, namespace string) {
+// Monitor gathers the data from the requested metrics, adds extra dimensions if requests and publish
+// them to CloudWatch under the provided namespace using the given client.
+func Monitor(metrics []metrics.Metric, extraDimensions []metrics.Dimension, namespace string, client cloudwatchiface.CloudWatchAPI) {
 	data := GatherData(metrics)
 	data.AddDimensions(extraDimensions...)
-	err := PublishDataToCloudWatch(data, client, namespace)
+	err := PublishDataToCloudWatch(data, namespace, client)
 	if err != nil {
 		log.Errorf("failed to publish data to cloudwatch: %s", err)
 	} else {
@@ -85,26 +90,27 @@ func Monitor(metrics []metrics.Metric, extraDimensions []metrics.Dimension, clie
 	}
 }
 
-func Run(c Config, ctx context.Context) error {
-	err := c.Validate()
+// Run the monitor command
+func Run(ctx context.Context, c Config) error {
+	err := c.validate()
 	if err != nil {
 		return errors.Wrap(err, "invalid inputs")
 	}
 
-	c.LogConfig()
+	c.logConfig()
 	log.Info("starting monitoring")
-	Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), c.Client, c.Namespace)
+	Monitor(c.getRequestedMetrics(), c.getExtraDimensions(), c.Namespace, c.Client)
 	if !c.Once {
 		var wg sync.WaitGroup
 		wg.Add(1)
 
 		go func() {
 			defer wg.Done()
-			ticker := c.GetTicker()
+			ticker := c.getTicker()
 			for {
 				select {
 				case <-ticker.C:
-					Monitor(c.GetRequestedMetrics(), c.GetExtraDimensions(), c.Client, c.Namespace)
+					Monitor(c.getRequestedMetrics(), c.getExtraDimensions(), c.Namespace, c.Client)
 				case <-ctx.Done():
 					log.Info("stopping monitoring")
 					return

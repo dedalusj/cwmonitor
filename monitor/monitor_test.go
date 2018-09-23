@@ -94,7 +94,7 @@ func TestPut(t *testing.T) {
 		mockClient := new(mockCloudWatchClient)
 		mockClient.On("PutMetricData", &cloudwatch.PutMetricDataInput{}).Return(&cloudwatch.PutMetricDataOutput{}, nil)
 
-		err := PublishDataToCloudWatch(metrics.Data{}, mockClient, "namespace")
+		err := PublishDataToCloudWatch(metrics.Data{}, "namespace", mockClient)
 		assert.NoError(t, err)
 		mockClient.AssertNotCalled(t, "PutMetricData")
 	})
@@ -112,7 +112,7 @@ func TestPut(t *testing.T) {
 			MetricData: expected,
 		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
-		err := PublishDataToCloudWatch(data, mockClient, namespace)
+		err := PublishDataToCloudWatch(data, namespace, mockClient)
 		assert.NoError(t, err)
 		mockClient.AssertExpectations(t)
 	})
@@ -134,7 +134,7 @@ func TestPut(t *testing.T) {
 			MetricData: expected[20:],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
-		err := PublishDataToCloudWatch(data, mockClient, namespace)
+		err := PublishDataToCloudWatch(data, namespace, mockClient)
 		assert.NoError(t, err)
 		mockClient.AssertExpectations(t)
 	})
@@ -156,7 +156,7 @@ func TestPut(t *testing.T) {
 			MetricData: expected[20:],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
-		err := PublishDataToCloudWatch(data, mockClient, namespace)
+		err := PublishDataToCloudWatch(data, namespace, mockClient)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "an error")
 		mockClient.AssertExpectations(t)
@@ -179,7 +179,7 @@ func TestPut(t *testing.T) {
 			MetricData: expected[20:],
 		}).Return(&cloudwatch.PutMetricDataOutput{}, errors.New("second error")).Once()
 
-		err := PublishDataToCloudWatch(data, mockClient, namespace)
+		err := PublishDataToCloudWatch(data, namespace, mockClient)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "first error")
 		assert.Contains(t, err.Error(), "second error")
@@ -211,7 +211,7 @@ func TestMonitor(t *testing.T) {
 			MetricData: expected,
 		}).Return(&cloudwatch.PutMetricDataOutput{}, nil).Once()
 
-		Monitor([]metrics.Metric{m}, []metrics.Dimension{extraDimension}, mockClient, namespace)
+		Monitor([]metrics.Metric{m}, []metrics.Dimension{extraDimension}, namespace, mockClient)
 
 		m.AssertExpectations(t)
 		mockClient.AssertExpectations(t)
@@ -237,7 +237,7 @@ func TestMonitor(t *testing.T) {
 			MetricData: expected,
 		}).Return(&cloudwatch.PutMetricDataOutput{}, errors.New("an error")).Once()
 
-		Monitor([]metrics.Metric{m}, []metrics.Dimension{extraDimension}, mockClient, namespace)
+		Monitor([]metrics.Metric{m}, []metrics.Dimension{extraDimension}, namespace, mockClient)
 
 		m.AssertExpectations(t)
 		mockClient.AssertExpectations(t)
@@ -267,7 +267,7 @@ func TestRun(t *testing.T) {
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*25)
 		defer cancel()
-		err := Run(c, ctx)
+		err := Run(ctx, c)
 
 		assert.NoError(t, err)
 		mockClient.AssertExpectations(t)
@@ -284,7 +284,7 @@ func TestRun(t *testing.T) {
 			Client:    mockClient,
 		}
 
-		err := Run(c, context.Background())
+		err := Run(context.Background(), c)
 
 		assert.Error(t, err)
 		mockClient.AssertNotCalled(t, "PutMetricData")
